@@ -1,11 +1,443 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Моя визитка</title>
+
+    <style>
+        /* ---------- БАЗОВЫЕ СТИЛИ ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at 30% 30%, #002b44, #0e1419 80%);
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------- ЧАСТИЦЫ (фон) ---------- */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(43, 161, 203, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #2ba1cb;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ---------- ОСНОВНАЯ КАРТОЧКА ---------- */
+        .card {
+            position: relative;
+            z-index: 1;
+            background: rgba(14, 25, 29, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(43, 161, 203, 0.3);
+            border-radius: 32px;
+            padding: 40px 35px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 43, 68, 0.8), 0 0 40px rgba(43, 161, 203, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(0, 43, 68, 0.9), 0 0 60px rgba(43, 161, 203, 0.3);
+        }
+
+        /* ---------- АВАТАР ---------- */
+        .avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+            border: 3px solid #2ba1cb;
+            box-shadow: 0 0 30px rgba(43, 161, 203, 0.5), inset 0 0 20px rgba(43, 161, 203, 0.2);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            animation: pulseBorder 3s ease-in-out infinite;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.4);
+        }
+
+        @keyframes pulseBorder {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(43, 161, 203, 0.4), inset 0 0 10px rgba(43, 161, 203, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.3);
+            }
+        }
+
+        /* ---------- ТЕКСТ ---------- */
+        .name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #ffffff, #2ba1cb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+        }
+
+        .title {
+            font-size: 16px;
+            color: #9bb7c9;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            font-weight: 300;
+            border-bottom: 1px solid rgba(43, 161, 203, 0.2);
+            padding-bottom: 15px;
+        }
+
+        /* ---------- СОЦСЕТИ ---------- */
+        .socials {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0 25px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 60px;
+            background: rgba(43, 161, 203, 0.08);
+            border: 1px solid rgba(43, 161, 203, 0.25);
+            color: #e0f0fa;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            min-width: 100px;
+        }
+
+        .social-link:hover {
+            background: rgba(43, 161, 203, 0.2);
+            border-color: #2ba1cb;
+            box-shadow: 0 0 30px rgba(43, 161, 203, 0.3);
+            transform: translateY(-3px) scale(1.03);
+            color: #ffffff;
+        }
+
+        .social-link .icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        /* ---------- ПЛАШКА "ОБО МНЕ" ---------- */
+        .about-section {
+            margin-top: 20px;
+            padding: 20px 15px;
+            border-radius: 24px;
+            background: rgba(0, 43, 68, 0.4);
+            border: 1px solid rgba(43, 161, 203, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .about-section:hover {
+            box-shadow: 0 0 40px rgba(43, 161, 203, 0.15);
+        }
+
+        .about-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2ba1cb;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(43, 161, 203, 0.3);
+        }
+
+        .about-media {
+            width: 100%;
+            border-radius: 16px;
+            margin: 10px 0 15px;
+            max-height: 300px;
+            object-fit: cover;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(43, 161, 203, 0.15);
+        }
+
+        .about-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #c8dde8;
+            text-align: left;
+            padding: 0 5px;
+        }
+
+        /* ---------- АДАПТИВ ---------- */
+        @media (max-width: 500px) {
+            .card {
+                padding: 28px 20px;
+            }
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+            .name {
+                font-size: 24px;
+            }
+            .social-link {
+                padding: 10px 16px;
+                font-size: 14px;
+                min-width: 80px;
+            }
+            .socials {
+                gap: 12px;
+            }
+            .about-section {
+                padding: 15px 12px;
+            }
+            .about-title {
+                font-size: 18px;
+            }
+        }
+
+        /* ---------- Скрытый аудио ---------- */
+        #bg-music {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет, мир!</h1>
-    <p>Меня зовут [Ваше Имя], и это мой сайт.</p>
+
+    <!-- ===== ФОН: ЧАСТИЦЫ ===== -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ===== ОСНОВНАЯ КАРТОЧКА ===== -->
+    <div class="card" id="app">
+
+        <!-- Аватар -->
+        <img class="avatar" id="avatar" alt="Аватар" />
+
+        <!-- Имя -->
+        <div class="name" id="name"></div>
+        <div class="title" id="title"></div>
+
+        <!-- Соцсети -->
+        <div class="socials" id="socials"></div>
+
+        <!-- Плашка "Обо мне" -->
+        <div class="about-section">
+            <div class="about-title" id="aboutTitle"></div>
+            <!-- Здесь будет либо <img>, либо <video> -->
+            <div id="aboutMediaContainer"></div>
+            <div class="about-text" id="aboutText"></div>
+        </div>
+
+    </div>
+
+    <!-- ===== АУДИОПЛЕЕР ===== -->
+    <audio id="bg-music" loop></audio>
+
+    <!-- ============================================================ -->
+    <!-- ===== ВСЕ НАСТРОЙКИ – МЕНЯЙТЕ ТОЛЬКО ЭТОТ БЛОК ===== -->
+    <script>
+        // -----------------------------------------------------------------
+        //  КОНФИГУРАЦИЯ САЙТА – ИЗМЕНЯЙТЕ ЗНАЧЕНИЯ НИЖЕ
+        // -----------------------------------------------------------------
+        const CONFIG = {
+            // --- Личные данные ---
+            name: 'iemes32',
+            title: '✦Ку 👋✦',
+
+            // --- Аватар (прямая ссылка или путь к файлу) ---
+            avatar: 'https://github.com/iemes32/iemes32.github.io/blob/main/ava.png',
+
+            // --- Ссылка на фоновую музыку (MP3) ---
+            // Если не нужна – оставьте пустую строку ''
+            music: 'https://github.com/iemes32/iemes32.github.io/blob/main/Aphex_Twin_%233.mp3',
+
+            // --- Фоновое изображение (вместо градиента) ---
+            // Если не нужно – оставьте пустую строку ''
+            backgroundImage: '', // пример: 'https://example.com/bg.jpg' или 'my-bg.jpg'
+
+            // --- Ссылки на соцсети (массив объектов) ---
+            socials: [
+                { name: 'Telegram', url: 'https://www.youtube.com/watch?v=JwuZvElQ11g', icon: '📱' },
+                { name: 'Discord', url: 'https://discord.com/users/1118893105647718412', icon: '💬' },
+                { name: 'Steam', url: 'https://steamcommunity.com/profiles/iemes32/', icon: '🎮' }
+                // Добавляйте сколько угодно:
+                // { name: 'Twitter', url: 'https://twitter.com/...', icon: '🐦' },
+            ],
+
+            // --- Плашка "Обо мне" ---
+            about: {
+                title: 'Об мне',
+                // Текст (можно использовать <br> для переноса)
+                text: 'Похуй, потом напишу',
+                // Медиа (фото или видео) – укажите URL или оставьте пустым ''
+                media: 'https://github.com/iemes32/iemes32.github.io/blob/main/photo1.jpg' // или video.mp4
+                // Если ссылка заканчивается на .mp4, .webm, .ogg – будет вставлено видео,
+                // иначе – картинка.
+            }
+        };
+        // -----------------------------------------------------------------
+        //  КОНЕЦ НАСТРОЕК – ДАЛЬШЕ НИЧЕГО НЕ МЕНЯЙТЕ
+        // -----------------------------------------------------------------
+    </script>
+
+    <!-- ===== СКРИПТЫ ОТОБРАЖЕНИЯ ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // 1. Применяем настройки
+            const c = CONFIG;
+
+            // Имя и заголовок
+            document.getElementById('name').textContent = c.name;
+            document.getElementById('title').textContent = c.title;
+
+            // Аватар
+            const avatarEl = document.getElementById('avatar');
+            avatarEl.src = c.avatar;
+            avatarEl.alt = 'Аватар ' + c.name;
+
+            // Соцсети
+            const socialsContainer = document.getElementById('socials');
+            socialsContainer.innerHTML = '';
+            c.socials.forEach(s => {
+                const a = document.createElement('a');
+                a.href = s.url;
+                a.target = '_blank';
+                a.className = 'social-link';
+                a.innerHTML = `<span class="icon">${s.icon}</span> ${s.name}`;
+                socialsContainer.appendChild(a);
+            });
+
+            // Плашка "Обо мне"
+            const about = c.about;
+            document.getElementById('aboutTitle').textContent = about.title;
+            document.getElementById('aboutText').innerHTML = about.text; // разрешаем HTML
+
+            // Медиа (фото/видео)
+            const mediaContainer = document.getElementById('aboutMediaContainer');
+            mediaContainer.innerHTML = '';
+            if (about.media && about.media.trim() !== '') {
+                const url = about.media.trim();
+                // Определяем тип по расширению
+                const ext = url.split('.').pop().toLowerCase();
+                const videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                let el;
+                if (videoExts.includes(ext)) {
+                    el = document.createElement('video');
+                    el.src = url;
+                    el.controls = true;
+                    el.loop = true;
+                    el.muted = true;
+                    el.autoplay = false;
+                    el.className = 'about-media';
+                    el.style.maxHeight = '300px';
+                    // при клике можно запускать
+                } else {
+                    el = document.createElement('img');
+                    el.src = url;
+                    el.alt = 'Фото';
+                    el.className = 'about-media';
+                    el.style.maxHeight = '300px';
+                }
+                mediaContainer.appendChild(el);
+            }
+
+            // 2. Фоновая музыка
+            const audio = document.getElementById('bg-music');
+            if (c.music && c.music.trim() !== '') {
+                audio.src = c.music;
+                // Автозапуск с обходом блокировки
+                const tryPlay = () => {
+                    audio.play().catch(() => {});
+                    document.removeEventListener('click', tryPlay);
+                    document.removeEventListener('touchstart', tryPlay);
+                };
+                audio.play().catch(() => {
+                    document.addEventListener('click', tryPlay);
+                    document.addEventListener('touchstart', tryPlay);
+                });
+            }
+
+            // 3. Фоновое изображение (если задано)
+            if (c.backgroundImage && c.backgroundImage.trim() !== '') {
+                document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
+                // убираем радиальный градиент, т.к. он перекрыт картинкой
+                // но мы задали через запятую, чтобы при провале была подложка
+            }
+
+            // 4. Частицы (генерируем)
+            (function createParticles() {
+                const container = document.getElementById('particles');
+                const count = 45;
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    const size = Math.random() * 9 + 3;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + '%';
+                    const duration = Math.random() * 12 + 8;
+                    particle.style.animationDuration = duration + 's';
+                    particle.style.animationDelay = Math.random() * 10 + 's';
+                    particle.style.opacity = Math.random() * 0.5 + 0.2;
+                    container.appendChild(particle);
+                }
+            })();
+
+        })();
+    </script>
+
 </body>
 </html>
