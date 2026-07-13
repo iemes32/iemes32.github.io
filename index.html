@@ -3,10 +3,76 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Моя визитка</title>
+    <title>iemes32 bio</title>
+
+    <!-- Favicon из аватара -->
+    <link rel="icon" id="favicon" href="" type="image/png" />
 
     <style>
-        /* ---------- БАЗОВЫЕ СТИЛИ ---------- */
+        /* ---------- ЭКРАН ЗАГРУЗКИ ---------- */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, #002b44, #0e1419 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+        #loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-spinner {
+            width: 70px;
+            height: 70px;
+            border: 4px solid rgba(43, 161, 203, 0.1);
+            border-top: 4px solid #2ba1cb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(43, 161, 203, 0.3);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loader-text {
+            margin-top: 25px;
+            font-size: 18px;
+            font-weight: 300;
+            color: #9bb7c9;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: pulseText 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        .loader-skip {
+            margin-top: 30px;
+            padding: 10px 30px;
+            background: rgba(43, 161, 203, 0.15);
+            border: 1px solid rgba(43, 161, 203, 0.4);
+            border-radius: 40px;
+            color: #e0f0fa;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .loader-skip:hover {
+            background: rgba(43, 161, 203, 0.3);
+            box-shadow: 0 0 25px rgba(43, 161, 203, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* ---------- ОБЩИЕ СТИЛИ ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -24,9 +90,15 @@
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+            /* Добавим анимацию фона */
+            animation: bgPulse 8s ease-in-out infinite alternate;
+        }
+        @keyframes bgPulse {
+            0% { background: radial-gradient(circle at 20% 20%, #002b44, #0e1419 80%); }
+            100% { background: radial-gradient(circle at 80% 80%, #003b5c, #0a1a22 80%); }
         }
 
-        /* ---------- ЧАСТИЦЫ (фон) ---------- */
+        /* ---------- ЧАСТИЦЫ (основные) ---------- */
         .particles {
             position: fixed;
             top: 0;
@@ -37,7 +109,6 @@
             z-index: 0;
             overflow: hidden;
         }
-
         .particle {
             position: absolute;
             background: rgba(43, 161, 203, 0.6);
@@ -45,25 +116,38 @@
             box-shadow: 0 0 15px #2ba1cb;
             animation: floatParticle linear infinite;
         }
-
         @keyframes floatParticle {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-        /* ---------- ОСНОВНАЯ КАРТОЧКА ---------- */
+        /* ---------- ДОПОЛНИТЕЛЬНЫЕ МЕРЦАЮЩИЕ ЗВЁЗДЫ ---------- */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ---------- КАРТОЧКА ---------- */
         .card {
             position: relative;
             z-index: 1;
@@ -78,8 +162,13 @@
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 43, 68, 0.8), 0 0 40px rgba(43, 161, 203, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* Добавим внутреннее свечение */
+            animation: glowPulse 4s ease-in-out infinite alternate;
         }
-
+        @keyframes glowPulse {
+            0% { box-shadow: 0 20px 60px rgba(0, 43, 68, 0.8), 0 0 40px rgba(43, 161, 203, 0.2); }
+            100% { box-shadow: 0 30px 80px rgba(0, 43, 68, 0.9), 0 0 70px rgba(43, 161, 203, 0.4); }
+        }
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 30px 80px rgba(0, 43, 68, 0.9), 0 0 60px rgba(43, 161, 203, 0.3);
@@ -98,20 +187,13 @@
             transition: box-shadow 0.3s ease, transform 0.3s ease;
             animation: pulseBorder 3s ease-in-out infinite;
         }
-
         .avatar:hover {
             transform: scale(1.05);
             box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.4);
         }
-
         @keyframes pulseBorder {
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(43, 161, 203, 0.4), inset 0 0 10px rgba(43, 161, 203, 0.1);
-            }
-            50% {
-                box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.3);
-            }
+            0%, 100% { box-shadow: 0 0 20px rgba(43, 161, 203, 0.4), inset 0 0 10px rgba(43, 161, 203, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.3); }
         }
 
         /* ---------- ТЕКСТ ---------- */
@@ -125,7 +207,6 @@
             background-clip: text;
             letter-spacing: 0.5px;
         }
-
         .title {
             font-size: 16px;
             color: #9bb7c9;
@@ -144,12 +225,11 @@
             flex-wrap: wrap;
             margin: 20px 0 25px;
         }
-
         .social-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             padding: 12px 24px;
             border-radius: 60px;
             background: rgba(43, 161, 203, 0.08);
@@ -162,8 +242,8 @@
             backdrop-filter: blur(4px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             min-width: 100px;
+            cursor: pointer;
         }
-
         .social-link:hover {
             background: rgba(43, 161, 203, 0.2);
             border-color: #2ba1cb;
@@ -171,10 +251,77 @@
             transform: translateY(-3px) scale(1.03);
             color: #ffffff;
         }
-
         .social-link .icon {
-            font-size: 20px;
-            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .social-link .icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* ---------- УПРАВЛЕНИЕ ЗВУКОМ ---------- */
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0 20px;
+            flex-wrap: wrap;
+        }
+        .audio-controls button {
+            background: rgba(43, 161, 203, 0.15);
+            border: 1px solid rgba(43, 161, 203, 0.3);
+            color: #e0f0fa;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .audio-controls button:hover {
+            background: rgba(43, 161, 203, 0.3);
+            box-shadow: 0 0 20px rgba(43, 161, 203, 0.2);
+        }
+        .audio-controls input[type="range"] {
+            -webkit-appearance: none;
+            background: rgba(43, 161, 203, 0.2);
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            width: 100px;
+            transition: background 0.3s;
+        }
+        .audio-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #2ba1cb;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(43, 161, 203, 0.5);
+        }
+        .audio-controls input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #2ba1cb;
+            cursor: pointer;
+        }
+        .audio-status {
+            font-size: 13px;
+            color: #9bb7c9;
+            min-width: 40px;
         }
 
         /* ---------- ПЛАШКА "ОБО МНЕ" ---------- */
@@ -187,11 +334,9 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             transition: box-shadow 0.3s ease;
         }
-
         .about-section:hover {
             box-shadow: 0 0 40px rgba(43, 161, 203, 0.15);
         }
-
         .about-title {
             font-size: 20px;
             font-weight: 600;
@@ -200,7 +345,6 @@
             letter-spacing: 1px;
             text-shadow: 0 0 20px rgba(43, 161, 203, 0.3);
         }
-
         .about-media {
             width: 100%;
             border-radius: 16px;
@@ -210,7 +354,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(43, 161, 203, 0.15);
         }
-
         .about-text {
             font-size: 15px;
             line-height: 1.6;
@@ -219,158 +362,337 @@
             padding: 0 5px;
         }
 
+        /* ---------- МОДАЛЬНОЕ ОКНО ---------- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: rgba(14, 25, 29, 0.95);
+            border: 1px solid #2ba1cb;
+            border-radius: 24px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px rgba(43, 161, 203, 0.3);
+            position: relative;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: none;
+            border: none;
+            color: #9bb7c9;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+        .modal-close:hover {
+            color: #fff;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2ba1cb;
+            margin-bottom: 18px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(43, 161, 203, 0.3);
+        }
+        .modal-body {
+            color: #c8dde8;
+            font-size: 14px;
+            line-height: 1.7;
+            text-align: left;
+        }
+        .modal-body .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(43, 161, 203, 0.08);
+        }
+        .modal-body .data-item .label {
+            color: #9bb7c9;
+            padding-right: 15px;
+        }
+        .modal-body .data-item .value {
+            color: #fff;
+            font-weight: 500;
+            text-align: right;
+            word-break: break-word;
+            max-width: 60%;
+        }
+        .modal-body .data-item .value.highlight {
+            color: #2ba1cb;
+        }
+
+        /* ---------- ПЛАШКА COOKIE ---------- */
+        .cookie-banner {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(14, 25, 29, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(43, 161, 203, 0.3);
+            border-radius: 20px;
+            padding: 20px 30px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            animation: slideUp 0.5s ease;
+            display: none; /* показываем скриптом */
+        }
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(30px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        .cookie-banner p {
+            font-size: 15px;
+            color: #e0f0fa;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .cookie-banner .cookie-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cookie-banner button {
+            padding: 8px 28px;
+            border-radius: 40px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .cookie-banner .btn-yes {
+            background: #2ba1cb;
+            color: #0e1419;
+        }
+        .cookie-banner .btn-yes:hover {
+            background: #3fc3f0;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(43, 161, 203, 0.4);
+        }
+        .cookie-banner .btn-absolutely {
+            background: #5c6873;
+            color: #fff;
+        }
+        .cookie-banner .btn-absolutely:hover {
+            background: #7a8a97;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(92, 104, 115, 0.4);
+        }
+
         /* ---------- АДАПТИВ ---------- */
         @media (max-width: 500px) {
-            .card {
-                padding: 28px 20px;
-            }
-            .avatar {
-                width: 100px;
-                height: 100px;
-            }
-            .name {
-                font-size: 24px;
-            }
-            .social-link {
-                padding: 10px 16px;
-                font-size: 14px;
-                min-width: 80px;
-            }
-            .socials {
-                gap: 12px;
-            }
-            .about-section {
-                padding: 15px 12px;
-            }
-            .about-title {
-                font-size: 18px;
-            }
+            .card { padding: 28px 20px; }
+            .avatar { width: 100px; height: 100px; }
+            .name { font-size: 24px; }
+            .social-link { padding: 10px 16px; font-size: 14px; min-width: 80px; }
+            .socials { gap: 12px; }
+            .about-section { padding: 15px 12px; }
+            .about-title { font-size: 18px; }
+            .audio-controls input[type="range"] { width: 70px; }
+            .modal-box { padding: 20px 15px; }
+            .modal-body .data-item { flex-direction: column; align-items: flex-start; gap: 2px; }
+            .modal-body .data-item .value { text-align: left; max-width: 100%; }
+            .cookie-banner { padding: 15px 20px; }
         }
 
         /* ---------- Скрытый аудио ---------- */
-        #bg-music {
-            display: none;
-        }
+        #bg-music { display: none; }
     </style>
 </head>
 <body>
 
+    <!-- ===== ЭКРАН ЗАГРУЗКИ ===== -->
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Загрузка...</div>
+        <button class="loader-skip" id="skipLoader">Пропустить</button>
+    </div>
+
     <!-- ===== ФОН: ЧАСТИЦЫ ===== -->
     <div class="particles" id="particles"></div>
+
+    <!-- ===== ДОПОЛНИТЕЛЬНЫЕ ЗВЁЗДЫ ===== -->
+    <div class="stars" id="stars"></div>
 
     <!-- ===== ОСНОВНАЯ КАРТОЧКА ===== -->
     <div class="card" id="app">
 
-        <!-- Аватар -->
         <img class="avatar" id="avatar" alt="Аватар" />
-
-        <!-- Имя -->
         <div class="name" id="name"></div>
         <div class="title" id="title"></div>
 
-        <!-- Соцсети -->
         <div class="socials" id="socials"></div>
 
-        <!-- Плашка "Обо мне" -->
+        <div class="audio-controls">
+            <button id="muteBtn">🔊</button>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" />
+            <span class="audio-status" id="volumeStatus">35%</span>
+        </div>
+
         <div class="about-section">
             <div class="about-title" id="aboutTitle"></div>
-            <!-- Здесь будет либо <img>, либо <video> -->
             <div id="aboutMediaContainer"></div>
             <div class="about-text" id="aboutText"></div>
         </div>
 
     </div>
 
-    <!-- ===== АУДИОПЛЕЕР ===== -->
+    <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-title">📡 Данные о вашем ПК</div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ===== ПЛАШКА COOKIE ===== -->
+    <div class="cookie-banner" id="cookieBanner">
+        <p>🍪 Вы согласны отдать все ваши cookie?</p>
+        <div class="cookie-buttons">
+            <button class="btn-yes" id="cookieYes">Да</button>
+            <button class="btn-absolutely" id="cookieAbsolutely">КОНЧЕНО ДА</button>
+        </div>
+    </div>
+
+    <!-- ===== АУДИО ===== -->
     <audio id="bg-music" loop></audio>
 
     <!-- ============================================================ -->
     <!-- ===== ВСЕ НАСТРОЙКИ – МЕНЯЙТЕ ТОЛЬКО ЭТОТ БЛОК ===== -->
     <script>
         // -----------------------------------------------------------------
-        //  КОНФИГУРАЦИЯ САЙТА – ИЗМЕНЯЙТЕ ЗНАЧЕНИЯ НИЖЕ
+        //  КОНФИГУРАЦИЯ САЙТА
         // -----------------------------------------------------------------
         const CONFIG = {
-            // --- Личные данные ---
             name: 'iemes32',
-            title: '✦Ку 👋✦',
-
-            // --- Аватар (прямая ссылка или путь к файлу) ---
+            title: '✦ Ку 👋 ✦',
             avatar: 'https://github.com/iemes32/iemes32.github.io/blob/main/ava.png?raw=true',
-
-            // --- Ссылка на фоновую музыку (MP3) ---
-            // Если не нужна – оставьте пустую строку ''
             music: 'https://github.com/iemes32/iemes32.github.io/raw/refs/heads/main/Dane%20Whisper%20-%20Planet%20V.mp3',
+            backgroundImage: '',
 
-            // --- Фоновое изображение (вместо градиента) ---
-            // Если не нужно – оставьте пустую строку ''
-            backgroundImage: '', // пример: 'https://example.com/bg.jpg' или 'my-bg.jpg'
-
-            // --- Ссылки на соцсети (массив объектов) ---
             socials: [
-                { name: 'Telegram', url: 'https://www.youtube.com/watch?v=JwuZvElQ11g', icon: '📱' },
-                { name: 'Discord', url: 'https://discord.com/users/1118893105647718412', icon: '💬' },
-                { name: 'Steam', url: 'https://steamcommunity.com/id/iemes32/', icon: '🎮' }
-                // Добавляйте сколько угодно:
-                // { name: 'Twitter', url: 'https://twitter.com/...', icon: '🐦' },
+                {
+                    name: 'Telegram',
+                    url: '#', // будет открывать модалку
+                    icon: '<img src="https://github.com/iemes32/iemes32.github.io/blob/main/telegram_tile_logo_icon_169640.ico?raw=true" alt="Telegram">'
+                },
+                {
+                    name: 'Discord',
+                    url: 'https://discord.com/users/1118893105647718412',
+                    icon: '<img src="https://github.com/iemes32/iemes32.github.io/blob/main/discord_macos_bigsur_icon_190238.ico?raw=true alt="Discord">'
+                },
+                {
+                    name: 'Steam',
+                    url: 'https://steamcommunity.com/id/iemes32/',
+                    icon: '<img src="https://steamcommunity.com/favicon.ico" alt="Steam">'
+                }
             ],
 
-            // --- Плашка "Обо мне" ---
             about: {
                 title: 'Об мне',
-                // Текст (можно использовать <br> для переноса)
                 text: 'Похуй, потом напишу',
-                // Медиа (фото или видео) – укажите URL или оставьте пустым ''
-                media: 'https://github.com/iemes32/iemes32.github.io/blob/main/photo1.jpg?raw=true' // или video.mp4
-                // Если ссылка заканчивается на .mp4, .webm, .ogg – будет вставлено видео,
-                // иначе – картинка.
+                media: 'https://github.com/iemes32/iemes32.github.io/blob/main/photo1.jpg?raw=true'
             }
         };
         // -----------------------------------------------------------------
-        //  КОНЕЦ НАСТРОЕК – ДАЛЬШЕ НИЧЕГО НЕ МЕНЯЙТЕ
+        //  КОНЕЦ НАСТРОЕК
         // -----------------------------------------------------------------
     </script>
 
-    <!-- ===== СКРИПТЫ ОТОБРАЖЕНИЯ ===== -->
+    <!-- ===== СКРИПТЫ ===== -->
     <script>
         (function() {
             'use strict';
 
-            // 1. Применяем настройки
             const c = CONFIG;
 
-            // Имя и заголовок
+            // ---------- 0. FAVICON из аватара ----------
+            const favicon = document.getElementById('favicon');
+            favicon.href = c.avatar;
+
+            // ---------- 1. ЗВЁЗДЫ (доп. эффект) ----------
+            (function createStars() {
+                const container = document.getElementById('stars');
+                for (let i = 0; i < 80; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.width = (Math.random() * 3 + 1) + 'px';
+                    star.style.height = star.style.width;
+                    star.style.animationDelay = Math.random() * 5 + 's';
+                    star.style.animationDuration = (Math.random() * 4 + 2) + 's';
+                    container.appendChild(star);
+                }
+            })();
+
+            // ---------- 2. ЗАПОЛНЕНИЕ ДАННЫХ ----------
             document.getElementById('name').textContent = c.name;
             document.getElementById('title').textContent = c.title;
 
-            // Аватар
             const avatarEl = document.getElementById('avatar');
             avatarEl.src = c.avatar;
             avatarEl.alt = 'Аватар ' + c.name;
 
-            // Соцсети
             const socialsContainer = document.getElementById('socials');
             socialsContainer.innerHTML = '';
             c.socials.forEach(s => {
                 const a = document.createElement('a');
-                a.href = s.url;
-                a.target = '_blank';
                 a.className = 'social-link';
+                if (s.name === 'Telegram') {
+                    a.href = 'javascript:void(0)';
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showModal();
+                    });
+                } else {
+                    a.href = s.url;
+                    a.target = '_blank';
+                }
                 a.innerHTML = `<span class="icon">${s.icon}</span> ${s.name}`;
                 socialsContainer.appendChild(a);
             });
 
-            // Плашка "Обо мне"
             const about = c.about;
             document.getElementById('aboutTitle').textContent = about.title;
-            document.getElementById('aboutText').innerHTML = about.text; // разрешаем HTML
+            document.getElementById('aboutText').innerHTML = about.text;
 
-            // Медиа (фото/видео)
             const mediaContainer = document.getElementById('aboutMediaContainer');
             mediaContainer.innerHTML = '';
             if (about.media && about.media.trim() !== '') {
                 const url = about.media.trim();
-                // Определяем тип по расширению
                 const ext = url.split('.').pop().toLowerCase();
                 const videoExts = ['mp4', 'webm', 'ogg', 'mov'];
                 let el;
@@ -380,10 +702,8 @@
                     el.controls = true;
                     el.loop = true;
                     el.muted = true;
-                    el.autoplay = false;
                     el.className = 'about-media';
                     el.style.maxHeight = '300px';
-                    // при клике можно запускать
                 } else {
                     el = document.createElement('img');
                     el.src = url;
@@ -394,33 +714,225 @@
                 mediaContainer.appendChild(el);
             }
 
-            // 2. Фоновая музыка
+            // ---------- 3. МУЗЫКА (запускается после скрытия загрузчика) ----------
             const audio = document.getElementById('bg-music');
+            let isMuted = false;
+            let currentVolume = 0.35; // по умолчанию 35%
+
             if (c.music && c.music.trim() !== '') {
                 audio.src = c.music;
-                // Автозапуск с обходом блокировки
-                const tryPlay = () => {
-                    audio.play().catch(() => {});
-                    document.removeEventListener('click', tryPlay);
-                    document.removeEventListener('touchstart', tryPlay);
-                };
-                audio.play().catch(() => {
-                    document.addEventListener('click', tryPlay);
-                    document.addEventListener('touchstart', tryPlay);
-                });
+                audio.volume = currentVolume;
             }
 
-            // 3. Фоновое изображение (если задано)
+            // Функция запуска музыки (вызывается при скрытии загрузчика)
+            function startMusic() {
+                if (audio.src) {
+                    audio.play().catch(() => {
+                        // если заблокировано, запустим по клику
+                        const onceClick = () => {
+                            audio.play().catch(() => {});
+                            document.removeEventListener('click', onceClick);
+                        };
+                        document.addEventListener('click', onceClick);
+                    });
+                }
+            }
+
+            // ---------- 4. УПРАВЛЕНИЕ ЗВУКОМ ----------
+            const muteBtn = document.getElementById('muteBtn');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeStatus = document.getElementById('volumeStatus');
+
+            function updateMuteUI() {
+                muteBtn.textContent = isMuted ? '🔇' : '🔊';
+                audio.muted = isMuted;
+                const vol = isMuted ? 0 : audio.volume;
+                volumeStatus.textContent = Math.round(vol * 100) + '%';
+                if (!isMuted) {
+                    volumeSlider.value = vol;
+                }
+            }
+
+            muteBtn.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    audio.muted = true;
+                } else {
+                    audio.muted = false;
+                    audio.volume = currentVolume;
+                    volumeSlider.value = currentVolume;
+                }
+                updateMuteUI();
+            });
+
+            volumeSlider.addEventListener('input', function() {
+                let val = parseFloat(this.value);
+                currentVolume = val;
+                if (!isMuted) {
+                    audio.volume = val;
+                }
+                volumeStatus.textContent = Math.round(val * 100) + '%';
+                if (isMuted && val > 0) {
+                    isMuted = false;
+                    audio.muted = false;
+                    audio.volume = val;
+                    updateMuteUI();
+                } else if (val === 0) {
+                    isMuted = true;
+                    audio.muted = true;
+                    updateMuteUI();
+                }
+            });
+
+            // Устанавливаем начальное значение громкости
+            volumeSlider.value = currentVolume;
+            volumeStatus.textContent = '35%';
+
+            // ---------- 5. МОДАЛЬНОЕ ОКНО ----------
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalBody = document.getElementById('modalBody');
+            const modalClose = document.getElementById('modalClose');
+
+            async function getRealIP() {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    return data.ip;
+                } catch {
+                    return 'не определен';
+                }
+            }
+
+            function getOS(ua) {
+                if (ua.indexOf('Windows') !== -1) return 'Windows';
+                if (ua.indexOf('Mac OS') !== -1) return 'macOS';
+                if (ua.indexOf('Linux') !== -1) return 'Linux';
+                if (ua.indexOf('Android') !== -1) return 'Android';
+                if (ua.indexOf('iOS') !== -1) return 'iOS';
+                return 'Unknown';
+            }
+
+            function getBrowser(ua) {
+                if (ua.indexOf('Firefox') !== -1) return 'Firefox';
+                if (ua.indexOf('Chrome') !== -1 && ua.indexOf('Edg') === -1) return 'Chrome';
+                if (ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1) return 'Safari';
+                if (ua.indexOf('Edg') !== -1) return 'Edge';
+                if (ua.indexOf('Opera') !== -1 || ua.indexOf('OPR') !== -1) return 'Opera';
+                return 'Unknown';
+            }
+
+            function getBrowserVersion(ua) {
+                const match = ua.match(/(Chrome|Firefox|Safari|Edg|OPR)\/(\d+\.\d+)/);
+                return match ? match[2] : '?';
+            }
+
+            async function showModal() {
+                const ua = navigator.userAgent;
+                const os = getOS(ua);
+                const browser = getBrowser(ua);
+                const browserVer = getBrowserVersion(ua);
+                const ip = await getRealIP();
+
+                const data = {
+                    'IP-адрес': ip,
+                    'Браузер': `${browser} ${browserVer}`,
+                    'Операционная система': os,
+                    'Платформа': navigator.platform,
+                    'Язык': navigator.language,
+                    'Часовой пояс': Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    'Cookies включены': navigator.cookieEnabled ? 'Да' : 'Нет',
+                    'Онлайн': navigator.onLine ? 'Да' : 'Нет',
+                    'Разрешение экрана': `${window.screen.width}×${window.screen.height}`,
+                    'Доступная область': `${window.screen.availWidth}×${window.screen.availHeight}`,
+                    'Глубина цвета': window.screen.colorDepth + ' бит',
+                    'Память устройства': navigator.deviceMemory ? navigator.deviceMemory + ' ГБ' : 'не известно',
+                    'Ядер процессора': navigator.hardwareConcurrency || 'не известно',
+                    'Тип сети': navigator.connection ? navigator.connection.effectiveType : 'не известно',
+                    'User-Agent': ua,
+                    'Дата и время': new Date().toLocaleString(),
+                    'Ваш любимый цвет': ['#2ba1cb', '#5c6873', '#002b44', '#ff6b6b', '#feca57'][Math.floor(Math.random() * 5)],
+                    'Скорость интернета': (Math.random() * 100 + 20).toFixed(1) + ' Мбит/с (приблизительно)'
+                };
+
+                let html = '';
+                for (let key in data) {
+                    let value = data[key];
+                    let cls = '';
+                    if (key === 'IP-адрес' || key === 'Ваш любимый цвет') cls = 'highlight';
+                    html += `<div class="data-item"><span class="label">${key}</span><span class="value ${cls}">${value}</span></div>`;
+                }
+                modalBody.innerHTML = html;
+                modalOverlay.classList.add('active');
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) closeModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
+            });
+
+            // ---------- 6. СКРЫТИЕ ЗАГРУЗЧИКА И ЗАПУСК МУЗЫКИ ----------
+            const loader = document.getElementById('loader');
+            const skipBtn = document.getElementById('skipLoader');
+
+            function hideLoader() {
+                if (loader.classList.contains('hidden')) return;
+                loader.classList.add('hidden');
+                // Запускаем музыку после скрытия
+                startMusic();
+                // Показываем cookie-баннер через 3 секунды, если ещё не соглашались
+                setTimeout(showCookieBanner, 3000);
+            }
+
+            // Событие полной загрузки страницы
+            window.addEventListener('load', function() {
+                // Если загрузчик ещё не скрыт, скрываем его (но только если не был скрыт скипом)
+                if (!loader.classList.contains('hidden')) {
+                    hideLoader();
+                }
+            });
+
+            // Кнопка "Пропустить"
+            skipBtn.addEventListener('click', function() {
+                hideLoader();
+            });
+
+            // ---------- 7. ПЛАШКА COOKIE ----------
+            const cookieBanner = document.getElementById('cookieBanner');
+            const cookieYes = document.getElementById('cookieYes');
+            const cookieAbsolutely = document.getElementById('cookieAbsolutely');
+
+            function showCookieBanner() {
+                // Проверяем, соглашался ли пользователь
+                if (localStorage.getItem('cookieConsent') === 'true') {
+                    return;
+                }
+                cookieBanner.style.display = 'block';
+            }
+
+            function acceptCookies() {
+                localStorage.setItem('cookieConsent', 'true');
+                cookieBanner.style.display = 'none';
+            }
+
+            cookieYes.addEventListener('click', acceptCookies);
+            cookieAbsolutely.addEventListener('click', acceptCookies);
+
+            // ---------- 8. ФОН (если задан) ----------
             if (c.backgroundImage && c.backgroundImage.trim() !== '') {
                 document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
-                // убираем радиальный градиент, т.к. он перекрыт картинкой
-                // но мы задали через запятую, чтобы при провале была подложка
             }
 
-            // 4. Частицы (генерируем)
+            // ---------- 9. ЧАСТИЦЫ (основные) ----------
             (function createParticles() {
                 const container = document.getElementById('particles');
-                const count = 45;
+                const count = 55; // чуть больше для красоты
                 for (let i = 0; i < count; i++) {
                     const particle = document.createElement('div');
                     particle.classList.add('particle');
