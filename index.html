@@ -6,7 +6,6 @@
     <title>iemes32 bio</title>
     <link rel="icon" id="favicon" href="" type="image/png" />
     <style>
-        /* ---------- ЭКРАН ЗАГРУЗКИ ---------- */
         #loader {
             position: fixed;
             top: 0;
@@ -86,7 +85,6 @@
             transform: scale(1.05);
         }
 
-        /* ---------- ОБЩИЕ СТИЛИ ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             min-height: 100vh;
@@ -106,7 +104,6 @@
             100% { background: radial-gradient(circle at 80% 80%, #003b5c, #0a1a22 80%); }
         }
 
-        /* ---------- ЧАСТИЦЫ ---------- */
         .particles {
             position: fixed;
             top: 0;
@@ -132,7 +129,6 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-        /* ---------- ЗВЁЗДЫ ---------- */
         .stars {
             position: fixed;
             top: 0;
@@ -156,7 +152,6 @@
             100% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* ---------- НЕОНОВЫЕ ЛИНИИ (доп. эффект) ---------- */
         .neon-lines {
             position: fixed;
             top: 0;
@@ -193,7 +188,6 @@
             100% { transform: translateX(100%); }
         }
 
-        /* ---------- ВИЗУАЛИЗАТОР (canvas) ---------- */
         #visualizer {
             position: fixed;
             bottom: 0;
@@ -205,7 +199,6 @@
             opacity: 0.4;
         }
 
-        /* ---------- КАРТОЧКА ---------- */
         .card {
             position: relative;
             z-index: 1;
@@ -230,7 +223,6 @@
             box-shadow: 0 30px 80px rgba(0, 43, 68, 0.9), 0 0 60px rgba(43, 161, 203, 0.3);
         }
 
-        /* ---------- АВАТАР ---------- */
         .avatar {
             width: 130px;
             height: 130px;
@@ -252,7 +244,6 @@
             50% { box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.3); }
         }
 
-        /* ---------- ТЕКСТ ---------- */
         .name {
             font-size: 28px;
             font-weight: 700;
@@ -273,7 +264,6 @@
             padding-bottom: 15px;
         }
 
-        /* ---------- ВКЛАДКИ ---------- */
         .tabs {
             display: flex;
             justify-content: center;
@@ -317,7 +307,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ---------- ПРОЕКТЫ ---------- */
         .projects-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -373,7 +362,6 @@
             text-decoration: underline;
         }
 
-        /* ---------- СОЦСЕТИ ---------- */
         .socials {
             display: flex;
             justify-content: center;
@@ -421,7 +409,6 @@
             object-fit: contain;
         }
 
-        /* ---------- УПРАВЛЕНИЕ ЗВУКОМ ---------- */
         .audio-controls {
             display: flex;
             align-items: center;
@@ -480,7 +467,6 @@
             min-width: 40px;
         }
 
-        /* ---------- "Обо мне" ---------- */
         .about-section {
             padding: 12px 10px;
             border-radius: 20px;
@@ -511,7 +497,6 @@
             text-align: left;
         }
 
-        /* ---------- МОДАЛЬНОЕ ОКНО ---------- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -594,8 +579,7 @@
             color: #2ba1cb;
         }
 
-        /* ---------- COOKIE ---------- */
-        .cookie-banner {
+        .cookie-banner, .vpn-banner {
             position: fixed;
             bottom: 30px;
             left: 50%;
@@ -613,23 +597,29 @@
             animation: slideUp 0.5s ease;
             display: none;
         }
+        .vpn-banner {
+            border-color: #ff6b6b;
+        }
+        .vpn-banner p {
+            color: #ff6b6b;
+        }
         @keyframes slideUp {
             from { transform: translateX(-50%) translateY(30px); opacity: 0; }
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
-        .cookie-banner p {
+        .cookie-banner p, .vpn-banner p {
             font-size: 15px;
             color: #e0f0fa;
             margin-bottom: 15px;
             line-height: 1.4;
         }
-        .cookie-banner .cookie-buttons {
+        .cookie-banner .cookie-buttons, .vpn-banner .vpn-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        .cookie-banner button {
+        .cookie-banner button, .vpn-banner button {
             padding: 8px 28px;
             border-radius: 40px;
             border: none;
@@ -656,8 +646,16 @@
             transform: scale(1.05);
             box-shadow: 0 0 25px rgba(92, 104, 115, 0.4);
         }
+        .vpn-banner .btn-close-vpn {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .vpn-banner .btn-close-vpn:hover {
+            background: #ff8787;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 107, 107, 0.4);
+        }
 
-        /* ---------- АДАПТИВ ---------- */
         @media (max-width: 500px) {
             .card { padding: 24px 18px; }
             .avatar { width: 100px; height: 100px; }
@@ -670,7 +668,7 @@
             .modal-box { padding: 20px 15px; }
             .modal-body .data-item { flex-direction: column; align-items: flex-start; gap: 2px; }
             .modal-body .data-item .value { text-align: left; max-width: 100%; }
-            .cookie-banner { padding: 15px 18px; }
+            .cookie-banner, .vpn-banner { padding: 15px 18px; }
             .projects-grid { grid-template-columns: 1fr; }
             .loader-title { font-size: 22px; }
             #visualizer { height: 60px; }
@@ -680,7 +678,6 @@
 </head>
 <body>
 
-    <!-- ===== ЭКРАН ЗАГРУЗКИ ===== -->
     <div id="loader">
         <div class="loader-title">✦ iemes32 ✦</div>
         <div class="progress-container">
@@ -690,7 +687,6 @@
         <button class="loader-enter-btn" id="enterBtn">Войти</button>
     </div>
 
-    <!-- ===== ФОН: ЧАСТИЦЫ + ЗВЁЗДЫ + НЕОНОВЫЕ ЛИНИИ ===== -->
     <div class="particles" id="particles"></div>
     <div class="stars" id="stars"></div>
     <div class="neon-lines">
@@ -698,34 +694,26 @@
         <div class="neon-line"></div>
         <div class="neon-line"></div>
     </div>
-
-    <!-- ===== ВИЗУАЛИЗАТОР ===== -->
     <canvas id="visualizer"></canvas>
 
-    <!-- ===== ОСНОВНАЯ КАРТОЧКА ===== -->
     <div class="card" id="app">
-
         <img class="avatar" id="avatar" alt="Аватар" />
         <div class="name" id="name"></div>
         <div class="title" id="title"></div>
 
-        <!-- Соцсети -->
         <div class="socials" id="socials"></div>
 
-        <!-- Управление звуком -->
         <div class="audio-controls">
             <button id="muteBtn">🔊</button>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" />
             <span class="audio-status" id="volumeStatus">35%</span>
         </div>
 
-        <!-- Вкладки -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="about">Обо мне</button>
             <button class="tab-btn" data-tab="projects">Мои проекты</button>
         </div>
 
-        <!-- Контент: Обо мне -->
         <div class="tab-content active" id="tab-about">
             <div class="about-section">
                 <div class="about-title" id="aboutTitle"></div>
@@ -734,14 +722,11 @@
             </div>
         </div>
 
-        <!-- Контент: Проекты -->
         <div class="tab-content" id="tab-projects">
             <div class="projects-grid" id="projectsGrid"></div>
         </div>
-
     </div>
 
-    <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <button class="modal-close" id="modalClose">&times;</button>
@@ -750,7 +735,6 @@
         </div>
     </div>
 
-    <!-- ===== COOKIE БАННЕР ===== -->
     <div class="cookie-banner" id="cookieBanner">
         <p>🍪 Вы согласны отдать все ваши cookie?</p>
         <div class="cookie-buttons">
@@ -759,22 +743,23 @@
         </div>
     </div>
 
-    <!-- ===== АУДИО ===== -->
+    <div class="vpn-banner" id="vpnBanner">
+        <p>⚠️ Отключите VPN, иначе вам перегрызут интернет.</p>
+        <div class="vpn-buttons">
+            <button class="btn-close-vpn" id="vpnClose">Понял, отключаю</button>
+        </div>
+    </div>
+
     <audio id="bg-music" loop></audio>
 
-    <!-- ============================================================ -->
     <!-- ===== ВСЕ НАСТРОЙКИ – МЕНЯЙТЕ ТОЛЬКО ЭТОТ БЛОК ===== -->
     <script>
-        // -----------------------------------------------------------------
-        //  КОНФИГУРАЦИЯ САЙТА
-        // -----------------------------------------------------------------
         const CONFIG = {
             name: 'iemes32',
             title: '✦ Ку 👋 ✦',
             avatar: 'https://github.com/iemes32/iemes32.github.io/blob/main/ava.png?raw=true',
-            music: 'https://github.com/iemes32/iemes32.github.io/raw/refs/heads/main/Dane%20Whisper%20-%20Planet%20V.mp3',
+            music: 'https://github.com/iemes32/iemes32.github.io/raw/refs/heads/main/Dane%20Whisper%20-%20Planet%20V.mp3?raw=true',
             backgroundImage: '',
-
             socials: [
                 {
                     name: 'Telegram',
@@ -792,40 +777,31 @@
                     icon: '<img src="https://steamcommunity.com/favicon.ico" alt="Steam">'
                 }
             ],
-
             about: {
                 title: 'Об мне',
-                text: 'Тут что то должно быть написано',
-                media: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/refs/heads/main/image.webp'
+                text: 'Тут должен быть текст',
+                media: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/refs/heads/main/image.webp?raw=true'
             },
-
-            // ---------- ПРОЕКТЫ ----------
             projects: [
                 {
                     title: 'Сайт-визитка',
-                    description: 'Личная сайт-визитка и по совместительству первый публичный проект.',
+                    description: 'Личная сайт-визитка и по совместительству первый публичный проект. ',
                     link: 'https://iemes32.github.io',
                     image: 'https://github.com/iemes32/iemes32.github.io/blob/main/bio_skrin.png?raw=true'
-                },
-                // Добавляйте сколько угодно
+                }
             ]
         };
-        // -----------------------------------------------------------------
-        //  КОНЕЦ НАСТРОЕК
-        // -----------------------------------------------------------------
     </script>
+    <!-- ===== КОНЕЦ НАСТРОЕК ===== -->
 
-    <!-- ===== СКРИПТЫ ===== -->
     <script>
         (function() {
             'use strict';
 
             const c = CONFIG;
 
-            // ---------- 0. FAVICON ----------
             document.getElementById('favicon').href = c.avatar;
 
-            // ---------- 1. ЗВЁЗДЫ ----------
             (function createStars() {
                 const container = document.getElementById('stars');
                 for (let i = 0; i < 80; i++) {
@@ -841,7 +817,6 @@
                 }
             })();
 
-            // ---------- 2. ЗАПОЛНЕНИЕ ДАННЫХ ----------
             document.getElementById('name').textContent = c.name;
             document.getElementById('title').textContent = c.title;
 
@@ -849,7 +824,6 @@
             avatarEl.src = c.avatar;
             avatarEl.alt = 'Аватар ' + c.name;
 
-            // Соцсети
             const socialsContainer = document.getElementById('socials');
             socialsContainer.innerHTML = '';
             c.socials.forEach(s => {
@@ -869,7 +843,6 @@
                 socialsContainer.appendChild(a);
             });
 
-            // Обо мне
             const about = c.about;
             document.getElementById('aboutTitle').textContent = about.title;
             document.getElementById('aboutText').innerHTML = about.text;
@@ -896,7 +869,6 @@
                 mediaContainer.appendChild(el);
             }
 
-            // Проекты
             const projectsGrid = document.getElementById('projectsGrid');
             projectsGrid.innerHTML = '';
             if (c.projects && c.projects.length > 0) {
@@ -919,12 +891,11 @@
                 projectsGrid.innerHTML = '<p style="color:#9bb7c9; text-align:center;">Пока нет проектов</p>';
             }
 
-            // ---------- 3. МУЗЫКА и ВИЗУАЛИЗАТОР ----------
+            // ---------- МУЗЫКА и ВИЗУАЛИЗАТОР ----------
             const audio = document.getElementById('bg-music');
             let isMuted = false;
             let currentVolume = 0.35;
 
-            // Настройка Web Audio API
             let audioCtx = null;
             let analyser = null;
             let dataArray = null;
@@ -943,18 +914,17 @@
                     analyser.connect(audioCtx.destination);
                     isAudioReady = true;
                 } catch (e) {
-                    console.warn('Web Audio не поддерживается, визуализатор отключён');
+                    console.warn('Web Audio не поддерживается');
                 }
             }
 
-            // ---------- 4. ВИЗУАЛИЗАТОР (Canvas) ----------
             const canvas = document.getElementById('visualizer');
             const ctx = canvas.getContext('2d');
             let width, height;
 
             function resizeCanvas() {
                 width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight * 0.15; // 15% высоты
+                height = canvas.height = window.innerHeight * 0.15;
                 canvas.style.height = height + 'px';
             }
             window.addEventListener('resize', resizeCanvas);
@@ -962,7 +932,6 @@
 
             function drawVisualizer() {
                 if (!isAudioReady || !analyser || !dataArray) {
-                    // Если звук не готов, рисуем простую анимацию (заглушка)
                     ctx.clearRect(0, 0, width, height);
                     const barWidth = (width / 64) * 0.8;
                     const gap = (width / 64) * 0.2;
@@ -994,7 +963,6 @@
                     const percent = value / 255;
                     const barHeight = percent * height * 0.9 + 4;
                     const x = i * (barWidth + gap) + gap / 2;
-                    // Градиент
                     const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
                     gradient.addColorStop(0, `hsl(${190 + percent * 30}, 80%, 60%)`);
                     gradient.addColorStop(1, `hsl(${210 + percent * 20}, 70%, 40%)`);
@@ -1002,15 +970,10 @@
                     ctx.fillRect(x, height - barHeight, barWidth, barHeight);
                 }
 
-                // Пульсация фона в зависимости от громкости
                 const avg = sum / bufferLength / 255;
-                const pulse = 0.7 + avg * 0.3;
-                document.body.style.animationDuration = (4 + (1 - avg) * 2) + 's';
                 document.querySelector('.card').style.animationDuration = (4 + (1 - avg) * 2) + 's';
-
-                // Синхронизация частиц
                 const particles = document.querySelectorAll('.particle');
-                particles.forEach((p, idx) => {
+                particles.forEach((p) => {
                     const scale = 0.7 + avg * 0.8;
                     p.style.transform = `scale(${scale})`;
                     p.style.opacity = 0.4 + avg * 0.6;
@@ -1018,11 +981,9 @@
 
                 requestAnimationFrame(drawVisualizer);
             }
-
-            // Запускаем визуализатор (сразу, без музыки)
             drawVisualizer();
 
-            // ---------- 5. УПРАВЛЕНИЕ ЗВУКОМ ----------
+            // ---------- УПРАВЛЕНИЕ ЗВУКОМ ----------
             const muteBtn = document.getElementById('muteBtn');
             const volumeSlider = document.getElementById('volumeSlider');
             const volumeStatus = document.getElementById('volumeStatus');
@@ -1068,7 +1029,7 @@
             volumeSlider.value = currentVolume;
             volumeStatus.textContent = '35%';
 
-            // ---------- 6. МОДАЛЬНОЕ ОКНО ----------
+            // ---------- МОДАЛЬНОЕ ОКНО ----------
             const modalOverlay = document.getElementById('modalOverlay');
             const modalBody = document.getElementById('modalBody');
             const modalClose = document.getElementById('modalClose');
@@ -1149,7 +1110,7 @@
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
 
-            // ---------- 7. ЗАГРУЗЧИК ----------
+            // ---------- ЗАГРУЗЧИК ----------
             const loader = document.getElementById('loader');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
@@ -1190,17 +1151,18 @@
                 loaderHidden = true;
                 loader.classList.add('hidden');
 
-                // Инициализация аудио и запуск музыки
                 if (audio.src) {
                     setupAudio();
-                    audio.play().then(() => {
-                        // Если аудио запустилось, подключаем визуализатор
-                        if (audioCtx && audioCtx.state === 'suspended') {
-                            audioCtx.resume();
-                        }
-                    }).catch(() => {});
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        audioCtx.resume().then(() => {
+                            audio.play().catch(() => {});
+                        }).catch(() => {});
+                    } else {
+                        audio.play().catch(() => {});
+                    }
                 }
                 setTimeout(showCookieBanner, 3000);
+                checkVPN();
             }
 
             window.addEventListener('load', function() {
@@ -1227,7 +1189,7 @@
             simulateProgress();
             enterBtn.addEventListener('click', enterSite);
 
-            // ---------- 8. COOKIE ----------
+            // ---------- COOKIE ----------
             const cookieBanner = document.getElementById('cookieBanner');
             const cookieYes = document.getElementById('cookieYes');
             const cookieAbsolutely = document.getElementById('cookieAbsolutely');
@@ -1244,7 +1206,29 @@
             cookieYes.addEventListener('click', acceptCookies);
             cookieAbsolutely.addEventListener('click', acceptCookies);
 
-            // ---------- 9. ВКЛАДКИ ----------
+            // ---------- VPN ----------
+            const vpnBanner = document.getElementById('vpnBanner');
+            const vpnClose = document.getElementById('vpnClose');
+
+            async function checkVPN() {
+                if (localStorage.getItem('vpnClosed') === 'true') return;
+                try {
+                    const res = await fetch('https://ip-api.com/json/');
+                    const data = await res.json();
+                    if (data.countryCode && data.countryCode !== 'RU' && data.countryCode !== 'BY') {
+                        vpnBanner.style.display = 'block';
+                    }
+                } catch {
+                    // если не удалось определить, ничего не показываем
+                }
+            }
+
+            vpnClose.addEventListener('click', function() {
+                localStorage.setItem('vpnClosed', 'true');
+                vpnBanner.style.display = 'none';
+            });
+
+            // ---------- ВКЛАДКИ ----------
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = {
                 about: document.getElementById('tab-about'),
@@ -1261,12 +1245,10 @@
                 });
             });
 
-            // ---------- 10. ФОН ----------
             if (c.backgroundImage && c.backgroundImage.trim() !== '') {
                 document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
             }
 
-            // ---------- 11. ЧАСТИЦЫ (динамические) ----------
             (function createParticles() {
                 const container = document.getElementById('particles');
                 for (let i = 0; i < 55; i++) {
