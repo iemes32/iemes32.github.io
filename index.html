@@ -677,7 +677,6 @@
     </style>
 </head>
 <body>
-
     <div id="loader">
         <div class="loader-title">✦ iemes32 ✦</div>
         <div class="progress-container">
@@ -758,7 +757,11 @@
             name: 'iemes32',
             title: '✦ Ку 👋 ✦',
             avatar: 'https://github.com/iemes32/iemes32.github.io/blob/main/ava.png?raw=true',
-            music: 'https://github.com/iemes32/iemes32.github.io/raw/refs/heads/main/Dane%20Whisper%20-%20Planet%20V.mp3?raw=true',
+
+            // ✅ ПРАВИЛЬНАЯ ССЫЛКА НА МУЗЫКУ
+            // Файл должен лежать в папке /music/ в корне репозитория
+            music: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/main/music/Dane%20Whisper%20-%20Planet%20V%20.mp3',
+
             backgroundImage: '',
             socials: [
                 {
@@ -785,7 +788,7 @@
             projects: [
                 {
                     title: 'Сайт-визитка',
-                    description: 'Личная сайт-визитка и по совместительству первый публичный проект. ',
+                    description: 'Личная сайт-визитка и по совместительству первый публичный проект.',
                     link: 'https://iemes32.github.io',
                     image: 'https://github.com/iemes32/iemes32.github.io/blob/main/bio_skrin.png?raw=true'
                 }
@@ -802,6 +805,7 @@
 
             document.getElementById('favicon').href = c.avatar;
 
+            // Звёзды
             (function createStars() {
                 const container = document.getElementById('stars');
                 for (let i = 0; i < 80; i++) {
@@ -817,6 +821,7 @@
                 }
             })();
 
+            // Заполнение данными
             document.getElementById('name').textContent = c.name;
             document.getElementById('title').textContent = c.title;
 
@@ -891,7 +896,9 @@
                 projectsGrid.innerHTML = '<p style="color:#9bb7c9; text-align:center;">Пока нет проектов</p>';
             }
 
-            // ---------- МУЗЫКА и ВИЗУАЛИЗАТОР ----------
+            // ============================================================
+            //  МУЗЫКА и ВИЗУАЛИЗАТОР (ПОЛНОСТЬЮ ПЕРЕРАБОТАНО)
+            // ============================================================
             const audio = document.getElementById('bg-music');
             let isMuted = false;
             let currentVolume = 0.35;
@@ -901,7 +908,9 @@
             let dataArray = null;
             let source = null;
             let isAudioReady = false;
+            let musicLoaded = false;
 
+            // Функция настройки Web Audio
             function setupAudio() {
                 if (audioCtx) return;
                 try {
@@ -913,11 +922,60 @@
                     source.connect(analyser);
                     analyser.connect(audioCtx.destination);
                     isAudioReady = true;
+                    console.log('✅ Web Audio настроен');
                 } catch (e) {
-                    console.warn('Web Audio не поддерживается');
+                    console.warn('⚠️ Web Audio не поддерживается:', e);
                 }
             }
 
+            // Функция запуска музыки (вызывается только по клику на "Войти")
+            function startMusic() {
+                if (!c.music || c.music.trim() === '') {
+                    console.log('ℹ️ Музыка не настроена');
+                    return;
+                }
+
+                // Устанавливаем источник, если ещё не установлен
+                if (!audio.src || audio.src === '') {
+                    audio.src = c.music;
+                    audio.load();
+                }
+
+                // Настраиваем Web Audio
+                setupAudio();
+
+                // Функция воспроизведения
+                const play = () => {
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        audioCtx.resume().then(() => {
+                            audio.play().catch(e => console.warn('⚠️ Ошибка воспроизведения:', e));
+                        }).catch(e => console.warn('⚠️ Ошибка resume:', e));
+                    } else {
+                        audio.play().catch(e => console.warn('⚠️ Ошибка воспроизведения:', e));
+                    }
+                };
+
+                // Если трек уже загружен — играем сразу
+                if (audio.readyState >= 2) {
+                    play();
+                } else {
+                    // Ждём загрузки
+                    audio.addEventListener('canplaythrough', function handler() {
+                        play();
+                        audio.removeEventListener('canplaythrough', handler);
+                    });
+                    // Запасной вариант: пробуем через 3 секунды
+                    setTimeout(() => {
+                        if (audio.readyState < 2) {
+                            play();
+                        }
+                    }, 3000);
+                }
+            }
+
+            // ============================================================
+            //  ВИЗУАЛИЗАТОР (Canvas)
+            // ============================================================
             const canvas = document.getElementById('visualizer');
             const ctx = canvas.getContext('2d');
             let width, height;
@@ -931,6 +989,7 @@
             resizeCanvas();
 
             function drawVisualizer() {
+                // Если музыка не готова — рисуем красивую заглушку
                 if (!isAudioReady || !analyser || !dataArray) {
                     ctx.clearRect(0, 0, width, height);
                     const barWidth = (width / 64) * 0.8;
@@ -949,6 +1008,7 @@
                     return;
                 }
 
+                // Режим с музыкой — рисуем по частотам
                 analyser.getByteFrequencyData(dataArray);
                 ctx.clearRect(0, 0, width, height);
 
@@ -970,6 +1030,7 @@
                     ctx.fillRect(x, height - barHeight, barWidth, barHeight);
                 }
 
+                // Пульсация частиц в такт музыке
                 const avg = sum / bufferLength / 255;
                 document.querySelector('.card').style.animationDuration = (4 + (1 - avg) * 2) + 's';
                 const particles = document.querySelectorAll('.particle');
@@ -981,9 +1042,13 @@
 
                 requestAnimationFrame(drawVisualizer);
             }
+
+            // Запускаем визуализатор (сразу, даже без музыки)
             drawVisualizer();
 
-            // ---------- УПРАВЛЕНИЕ ЗВУКОМ ----------
+            // ============================================================
+            //  УПРАВЛЕНИЕ ЗВУКОМ (кнопка и ползунок)
+            // ============================================================
             const muteBtn = document.getElementById('muteBtn');
             const volumeSlider = document.getElementById('volumeSlider');
             const volumeStatus = document.getElementById('volumeStatus');
@@ -1029,7 +1094,9 @@
             volumeSlider.value = currentVolume;
             volumeStatus.textContent = '35%';
 
-            // ---------- МОДАЛЬНОЕ ОКНО ----------
+            // ============================================================
+            //  МОДАЛЬНОЕ ОКНО (Telegram)
+            // ============================================================
             const modalOverlay = document.getElementById('modalOverlay');
             const modalBody = document.getElementById('modalBody');
             const modalClose = document.getElementById('modalClose');
@@ -1110,7 +1177,9 @@
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
 
-            // ---------- ЗАГРУЗЧИК ----------
+            // ============================================================
+            //  ЗАГРУЗЧИК + ВХОД НА САЙТ
+            // ============================================================
             const loader = document.getElementById('loader');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
@@ -1146,21 +1215,16 @@
                 enterBtn.classList.add('active');
             }
 
+            // ===== ВХОД НА САЙТ =====
             function enterSite() {
                 if (loaderHidden) return;
                 loaderHidden = true;
                 loader.classList.add('hidden');
 
-                if (audio.src) {
-                    setupAudio();
-                    if (audioCtx && audioCtx.state === 'suspended') {
-                        audioCtx.resume().then(() => {
-                            audio.play().catch(() => {});
-                        }).catch(() => {});
-                    } else {
-                        audio.play().catch(() => {});
-                    }
-                }
+                // ✅ ЗАПУСКАЕМ МУЗЫКУ (только по клику на "Войти")
+                startMusic();
+
+                // Показываем куки и проверяем VPN
                 setTimeout(showCookieBanner, 3000);
                 checkVPN();
             }
@@ -1189,7 +1253,9 @@
             simulateProgress();
             enterBtn.addEventListener('click', enterSite);
 
-            // ---------- COOKIE ----------
+            // ============================================================
+            //  COOKIE
+            // ============================================================
             const cookieBanner = document.getElementById('cookieBanner');
             const cookieYes = document.getElementById('cookieYes');
             const cookieAbsolutely = document.getElementById('cookieAbsolutely');
@@ -1206,20 +1272,22 @@
             cookieYes.addEventListener('click', acceptCookies);
             cookieAbsolutely.addEventListener('click', acceptCookies);
 
-            // ---------- VPN ----------
+            // ============================================================
+            //  VPN (проверка через ipinfo.io)
+            // ============================================================
             const vpnBanner = document.getElementById('vpnBanner');
             const vpnClose = document.getElementById('vpnClose');
 
             async function checkVPN() {
                 if (localStorage.getItem('vpnClosed') === 'true') return;
                 try {
-                    const res = await fetch('https://ip-api.com/json/');
+                    const res = await fetch('https://ipinfo.io/json?nocache=' + Date.now());
                     const data = await res.json();
-                    if (data.countryCode && data.countryCode !== 'RU' && data.countryCode !== 'BY') {
+                    if (data.country && data.country !== 'RU' && data.country !== 'BY') {
                         vpnBanner.style.display = 'block';
                     }
                 } catch {
-                    // если не удалось определить, ничего не показываем
+                    // Если не удалось определить — ничего не показываем
                 }
             }
 
@@ -1228,7 +1296,9 @@
                 vpnBanner.style.display = 'none';
             });
 
-            // ---------- ВКЛАДКИ ----------
+            // ============================================================
+            //  ВКЛАДКИ
+            // ============================================================
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = {
                 about: document.getElementById('tab-about'),
@@ -1245,10 +1315,16 @@
                 });
             });
 
+            // ============================================================
+            //  ФОН (если задан)
+            // ============================================================
             if (c.backgroundImage && c.backgroundImage.trim() !== '') {
                 document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
             }
 
+            // ============================================================
+            //  ЧАСТИЦЫ
+            // ============================================================
             (function createParticles() {
                 const container = document.getElementById('particles');
                 for (let i = 0; i < 55; i++) {
