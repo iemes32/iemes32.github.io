@@ -6,6 +6,7 @@
     <title>iemes32 bio</title>
     <link rel="icon" id="favicon" href="" type="image/png" />
     <style>
+        /* ---------- Стили (без изменений, они рабочие) ---------- */
         #loader {
             position: fixed;
             top: 0;
@@ -87,9 +88,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            <audio id="bg-music" loop>
-    <source src="https://raw.githubusercontent.com/iemes32/iemes32.github.io/main/music/Dane%20Whisper%20-%20Planet%20V%20.mp3" type="audio/mpeg">
-</audio>
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -680,6 +678,8 @@
     </style>
 </head>
 <body>
+
+    <!-- ===== ЭКРАН ЗАГРУЗКИ ===== -->
     <div id="loader">
         <div class="loader-title">✦ iemes32 ✦</div>
         <div class="progress-container">
@@ -689,6 +689,7 @@
         <button class="loader-enter-btn" id="enterBtn">Войти</button>
     </div>
 
+    <!-- ===== ФОН ===== -->
     <div class="particles" id="particles"></div>
     <div class="stars" id="stars"></div>
     <div class="neon-lines">
@@ -698,6 +699,7 @@
     </div>
     <canvas id="visualizer"></canvas>
 
+    <!-- ===== ОСНОВНАЯ КАРТОЧКА ===== -->
     <div class="card" id="app">
         <img class="avatar" id="avatar" alt="Аватар" />
         <div class="name" id="name"></div>
@@ -705,12 +707,14 @@
 
         <div class="socials" id="socials"></div>
 
+        <!-- ===== УПРАВЛЕНИЕ ЗВУКОМ ===== -->
         <div class="audio-controls">
             <button id="muteBtn">🔊</button>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" />
             <span class="audio-status" id="volumeStatus">35%</span>
         </div>
 
+        <!-- ===== ВКЛАДКИ ===== -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="about">Обо мне</button>
             <button class="tab-btn" data-tab="projects">Мои проекты</button>
@@ -729,6 +733,7 @@
         </div>
     </div>
 
+    <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <button class="modal-close" id="modalClose">&times;</button>
@@ -737,6 +742,7 @@
         </div>
     </div>
 
+    <!-- ===== COOKIE ===== -->
     <div class="cookie-banner" id="cookieBanner">
         <p>🍪 Вы согласны отдать все ваши cookie?</p>
         <div class="cookie-buttons">
@@ -745,6 +751,7 @@
         </div>
     </div>
 
+    <!-- ===== VPN ===== -->
     <div class="vpn-banner" id="vpnBanner">
         <p>⚠️ Отключите VPN, иначе вам перегрызут интернет.</p>
         <div class="vpn-buttons">
@@ -752,19 +759,17 @@
         </div>
     </div>
 
+    <!-- ===== АУДИО-ЭЛЕМЕНТ (будет использован через fetch+Blob) ===== -->
     <audio id="bg-music" loop></audio>
 
+    <!-- ============================================================ -->
     <!-- ===== ВСЕ НАСТРОЙКИ – МЕНЯЙТЕ ТОЛЬКО ЭТОТ БЛОК ===== -->
     <script>
         const CONFIG = {
             name: 'iemes32',
             title: '✦ Ку 👋 ✦',
             avatar: 'https://github.com/iemes32/iemes32.github.io/blob/main/ava.png?raw=true',
-
-            // ✅ ПРАВИЛЬНАЯ ССЫЛКА НА МУЗЫКУ
-            // Файл должен лежать в папке /music/ в корне репозитория
             music: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/main/music/Dane%20Whisper%20-%20Planet%20V%20.mp3',
-
             backgroundImage: '',
             socials: [
                 {
@@ -806,9 +811,10 @@
 
             const c = CONFIG;
 
+            // ---------- FAVICON ----------
             document.getElementById('favicon').href = c.avatar;
 
-            // Звёзды
+            // ---------- ЗВЁЗДЫ ----------
             (function createStars() {
                 const container = document.getElementById('stars');
                 for (let i = 0; i < 80; i++) {
@@ -824,7 +830,7 @@
                 }
             })();
 
-            // Заполнение данными
+            // ---------- ЗАПОЛНЕНИЕ ДАННЫХ ----------
             document.getElementById('name').textContent = c.name;
             document.getElementById('title').textContent = c.title;
 
@@ -900,7 +906,7 @@
             }
 
             // ============================================================
-            //  МУЗЫКА и ВИЗУАЛИЗАТОР (ПОЛНОСТЬЮ ПЕРЕРАБОТАНО)
+            //  МУЗЫКА через fetch + Blob + AnalyserNode
             // ============================================================
             const audio = document.getElementById('bg-music');
             let isMuted = false;
@@ -911,9 +917,10 @@
             let dataArray = null;
             let source = null;
             let isAudioReady = false;
-            let musicLoaded = false;
+            let audioLoaded = false;
+            let audioBlobUrl = null;
 
-            // Функция настройки Web Audio
+            // ---------- Настройка Web Audio ----------
             function setupAudio() {
                 if (audioCtx) return;
                 try {
@@ -921,9 +928,6 @@
                     analyser = audioCtx.createAnalyser();
                     analyser.fftSize = 128;
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
-                    source = audioCtx.createMediaElementSource(audio);
-                    source.connect(analyser);
-                    analyser.connect(audioCtx.destination);
                     isAudioReady = true;
                     console.log('✅ Web Audio настроен');
                 } catch (e) {
@@ -931,127 +935,71 @@
                 }
             }
 
-            // Функция запуска музыки (вызывается только по клику на "Войти")
-            function startMusic() {
-                if (!c.music || c.music.trim() === '') {
-                    console.log('ℹ️ Музыка не настроена');
+            // ---------- Загрузка и воспроизведение через fetch + Blob ----------
+            let playPromise = null;
+
+            function loadAndPlayMusic() {
+                if (audioLoaded && !audio.paused) {
+                    // уже играет
                     return;
                 }
 
-                // Устанавливаем источник, если ещё не установлен
-                if (!audio.src || audio.src === '') {
-                    audio.src = c.music;
-                    audio.load();
+                if (audioLoaded && audio.paused) {
+                    // на паузе – просто возобновляем
+                    audio.play().catch(e => console.warn(e));
+                    return;
                 }
 
-                // Настраиваем Web Audio
-                setupAudio();
+                // Первая загрузка
+                const statusEl = document.getElementById('volumeStatus');
+                statusEl.textContent = 'Загрузка...';
 
-                // Функция воспроизведения
-                const play = () => {
-                    if (audioCtx && audioCtx.state === 'suspended') {
-                        audioCtx.resume().then(() => {
-                            audio.play().catch(e => console.warn('⚠️ Ошибка воспроизведения:', e));
-                        }).catch(e => console.warn('⚠️ Ошибка resume:', e));
-                    } else {
-                        audio.play().catch(e => console.warn('⚠️ Ошибка воспроизведения:', e));
-                    }
-                };
-
-                // Если трек уже загружен — играем сразу
-                if (audio.readyState >= 2) {
-                    play();
-                } else {
-                    // Ждём загрузки
-                    audio.addEventListener('canplaythrough', function handler() {
-                        play();
-                        audio.removeEventListener('canplaythrough', handler);
-                    });
-                    // Запасной вариант: пробуем через 3 секунды
-                    setTimeout(() => {
-                        if (audio.readyState < 2) {
-                            play();
+                fetch(c.music)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        if (!blob.type.startsWith('audio/')) {
+                            console.warn('Сервер вернул MIME:', blob.type);
                         }
-                    }, 3000);
-                }
+                        audioBlobUrl = URL.createObjectURL(blob);
+                        audio.src = audioBlobUrl;
+                        audio.load();
+
+                        // Настраиваем Web Audio
+                        setupAudio();
+                        if (audioCtx) {
+                            try {
+                                source = audioCtx.createMediaElementSource(audio);
+                                source.connect(analyser);
+                                analyser.connect(audioCtx.destination);
+                                isAudioReady = true;
+                            } catch (e) {
+                                console.warn('Не удалось подключить AnalyserNode:', e);
+                            }
+                        }
+
+                        audioLoaded = true;
+
+                        // Воспроизводим
+                        if (audioCtx && audioCtx.state === 'suspended') {
+                            audioCtx.resume().then(() => {
+                                audio.play().catch(e => console.warn(e));
+                            }).catch(e => console.warn(e));
+                        } else {
+                            audio.play().catch(e => console.warn(e));
+                        }
+
+                        statusEl.textContent = Math.round(currentVolume * 100) + '%';
+                    })
+                    .catch(err => {
+                        console.error('Ошибка загрузки музыки:', err);
+                        statusEl.textContent = '❌ Ошибка';
+                    });
             }
 
-            // ============================================================
-            //  ВИЗУАЛИЗАТОР (Canvas)
-            // ============================================================
-            const canvas = document.getElementById('visualizer');
-            const ctx = canvas.getContext('2d');
-            let width, height;
-
-            function resizeCanvas() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight * 0.15;
-                canvas.style.height = height + 'px';
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            function drawVisualizer() {
-                // Если музыка не готова — рисуем красивую заглушку
-                if (!isAudioReady || !analyser || !dataArray) {
-                    ctx.clearRect(0, 0, width, height);
-                    const barWidth = (width / 64) * 0.8;
-                    const gap = (width / 64) * 0.2;
-                    const now = Date.now() / 1000;
-                    for (let i = 0; i < 64; i++) {
-                        const barHeight = 10 + 30 * (0.5 + 0.5 * Math.sin(now * 2 + i * 0.3));
-                        const x = i * (barWidth + gap) + gap / 2;
-                        const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
-                        gradient.addColorStop(0, '#2ba1cb');
-                        gradient.addColorStop(1, '#5c6873');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
-                    }
-                    requestAnimationFrame(drawVisualizer);
-                    return;
-                }
-
-                // Режим с музыкой — рисуем по частотам
-                analyser.getByteFrequencyData(dataArray);
-                ctx.clearRect(0, 0, width, height);
-
-                const bufferLength = analyser.frequencyBinCount;
-                const barWidth = (width / bufferLength) * 0.8;
-                const gap = (width / bufferLength) * 0.2;
-                let sum = 0;
-
-                for (let i = 0; i < bufferLength; i++) {
-                    const value = dataArray[i];
-                    sum += value;
-                    const percent = value / 255;
-                    const barHeight = percent * height * 0.9 + 4;
-                    const x = i * (barWidth + gap) + gap / 2;
-                    const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
-                    gradient.addColorStop(0, `hsl(${190 + percent * 30}, 80%, 60%)`);
-                    gradient.addColorStop(1, `hsl(${210 + percent * 20}, 70%, 40%)`);
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(x, height - barHeight, barWidth, barHeight);
-                }
-
-                // Пульсация частиц в такт музыке
-                const avg = sum / bufferLength / 255;
-                document.querySelector('.card').style.animationDuration = (4 + (1 - avg) * 2) + 's';
-                const particles = document.querySelectorAll('.particle');
-                particles.forEach((p) => {
-                    const scale = 0.7 + avg * 0.8;
-                    p.style.transform = `scale(${scale})`;
-                    p.style.opacity = 0.4 + avg * 0.6;
-                });
-
-                requestAnimationFrame(drawVisualizer);
-            }
-
-            // Запускаем визуализатор (сразу, даже без музыки)
-            drawVisualizer();
-
-            // ============================================================
-            //  УПРАВЛЕНИЕ ЗВУКОМ (кнопка и ползунок)
-            // ============================================================
+            // ---------- УПРАВЛЕНИЕ ЗВУКОМ ----------
             const muteBtn = document.getElementById('muteBtn');
             const volumeSlider = document.getElementById('volumeSlider');
             const volumeStatus = document.getElementById('volumeStatus');
@@ -1096,6 +1044,77 @@
             });
             volumeSlider.value = currentVolume;
             volumeStatus.textContent = '35%';
+
+            // ---------- ВИЗУАЛИЗАТОР (Canvas) ----------
+            const canvas = document.getElementById('visualizer');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+
+            function resizeCanvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight * 0.15;
+                canvas.style.height = height + 'px';
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function drawVisualizer() {
+                // Если музыка не готова или нет данных – рисуем заглушку
+                if (!isAudioReady || !analyser || !dataArray) {
+                    ctx.clearRect(0, 0, width, height);
+                    const barWidth = (width / 64) * 0.8;
+                    const gap = (width / 64) * 0.2;
+                    const now = Date.now() / 1000;
+                    for (let i = 0; i < 64; i++) {
+                        const barHeight = 10 + 30 * (0.5 + 0.5 * Math.sin(now * 2 + i * 0.3));
+                        const x = i * (barWidth + gap) + gap / 2;
+                        const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
+                        gradient.addColorStop(0, '#2ba1cb');
+                        gradient.addColorStop(1, '#5c6873');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+                    }
+                    requestAnimationFrame(drawVisualizer);
+                    return;
+                }
+
+                // Режим с музыкой – рисуем по частотам
+                analyser.getByteFrequencyData(dataArray);
+                ctx.clearRect(0, 0, width, height);
+
+                const bufferLength = analyser.frequencyBinCount;
+                const barWidth = (width / bufferLength) * 0.8;
+                const gap = (width / bufferLength) * 0.2;
+                let sum = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const value = dataArray[i];
+                    sum += value;
+                    const percent = value / 255;
+                    const barHeight = percent * height * 0.9 + 4;
+                    const x = i * (barWidth + gap) + gap / 2;
+                    const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
+                    gradient.addColorStop(0, `hsl(${190 + percent * 30}, 80%, 60%)`);
+                    gradient.addColorStop(1, `hsl(${210 + percent * 20}, 70%, 40%)`);
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+                }
+
+                // Пульсация частиц в такт музыке
+                const avg = sum / bufferLength / 255;
+                document.querySelector('.card').style.animationDuration = (4 + (1 - avg) * 2) + 's';
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach((p) => {
+                    const scale = 0.7 + avg * 0.8;
+                    p.style.transform = `scale(${scale})`;
+                    p.style.opacity = 0.4 + avg * 0.6;
+                });
+
+                requestAnimationFrame(drawVisualizer);
+            }
+
+            // Запускаем визуализатор (сразу)
+            drawVisualizer();
 
             // ============================================================
             //  МОДАЛЬНОЕ ОКНО (Telegram)
@@ -1181,7 +1200,7 @@
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
 
             // ============================================================
-            //  ЗАГРУЗЧИК + ВХОД НА САЙТ
+            //  ЗАГРУЗЧИК + ВХОД
             // ============================================================
             const loader = document.getElementById('loader');
             const progressBar = document.getElementById('progressBar');
@@ -1218,16 +1237,16 @@
                 enterBtn.classList.add('active');
             }
 
-            // ===== ВХОД НА САЙТ =====
             function enterSite() {
                 if (loaderHidden) return;
                 loaderHidden = true;
                 loader.classList.add('hidden');
 
-                // ✅ ЗАПУСКАЕМ МУЗЫКУ (только по клику на "Войти")
-                startMusic();
+                // Загружаем и запускаем музыку
+                if (c.music && c.music.trim() !== '') {
+                    loadAndPlayMusic();
+                }
 
-                // Показываем куки и проверяем VPN
                 setTimeout(showCookieBanner, 3000);
                 checkVPN();
             }
@@ -1276,7 +1295,7 @@
             cookieAbsolutely.addEventListener('click', acceptCookies);
 
             // ============================================================
-            //  VPN (проверка через ipinfo.io)
+            //  VPN
             // ============================================================
             const vpnBanner = document.getElementById('vpnBanner');
             const vpnClose = document.getElementById('vpnClose');
@@ -1290,7 +1309,7 @@
                         vpnBanner.style.display = 'block';
                     }
                 } catch {
-                    // Если не удалось определить — ничего не показываем
+                    // ignore
                 }
             }
 
@@ -1319,7 +1338,7 @@
             });
 
             // ============================================================
-            //  ФОН (если задан)
+            //  ФОН
             // ============================================================
             if (c.backgroundImage && c.backgroundImage.trim() !== '') {
                 document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
