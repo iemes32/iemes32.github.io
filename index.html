@@ -6,7 +6,6 @@
     <title>iemes32 bio</title>
     <link rel="icon" id="favicon" href="" type="image/png" />
     <style>
-        /* ---------- Стили (без изменений, они рабочие) ---------- */
         #loader {
             position: fixed;
             top: 0;
@@ -84,6 +83,28 @@
             background: rgba(43, 161, 203, 0.4);
             box-shadow: 0 0 50px rgba(43, 161, 203, 0.3);
             transform: scale(1.05);
+        }
+        .loader-skip-btn {
+            margin-top: 20px;
+            padding: 8px 30px;
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid #ff6b6b;
+            border-radius: 60px;
+            color: #ff6b6b;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+        .loader-skip-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+            display: inline-block;
+        }
+        .loader-skip-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -363,6 +384,28 @@
             text-decoration: underline;
         }
 
+        /* ---------- АЛЬБОМ (скрыт) ---------- */
+        /*
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .album-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 1px solid rgba(43, 161, 203, 0.2);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .album-item img:hover {
+            transform: scale(1.05);
+        }
+        */
+
         .socials {
             display: flex;
             justify-content: center;
@@ -580,47 +623,40 @@
             color: #2ba1cb;
         }
 
-        .cookie-banner, .vpn-banner {
+        .cookie-banner {
             position: fixed;
             bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 30px;
             z-index: 1000;
             background: rgba(14, 25, 29, 0.92);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(43, 161, 203, 0.3);
             border-radius: 20px;
             padding: 18px 28px;
-            max-width: 420px;
+            max-width: 350px;
             width: 90%;
             text-align: center;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
-            animation: slideUp 0.5s ease;
+            animation: slideUpLeft 0.5s ease;
             display: none;
         }
-        .vpn-banner {
-            border-color: #ff6b6b;
+        @keyframes slideUpLeft {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        .vpn-banner p {
-            color: #ff6b6b;
-        }
-        @keyframes slideUp {
-            from { transform: translateX(-50%) translateY(30px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-        .cookie-banner p, .vpn-banner p {
+        .cookie-banner p {
             font-size: 15px;
             color: #e0f0fa;
             margin-bottom: 15px;
             line-height: 1.4;
         }
-        .cookie-banner .cookie-buttons, .vpn-banner .vpn-buttons {
+        .cookie-banner .cookie-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        .cookie-banner button, .vpn-banner button {
+        .cookie-banner button {
             padding: 8px 28px;
             border-radius: 40px;
             border: none;
@@ -647,7 +683,48 @@
             transform: scale(1.05);
             box-shadow: 0 0 25px rgba(92, 104, 115, 0.4);
         }
+
+        .vpn-banner {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: rgba(14, 25, 29, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid #ff6b6b;
+            border-radius: 20px;
+            padding: 18px 28px;
+            max-width: 350px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            animation: slideUpRight 0.5s ease;
+            display: none;
+        }
+        @keyframes slideUpRight {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .vpn-banner p {
+            font-size: 15px;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .vpn-banner .vpn-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
         .vpn-banner .btn-close-vpn {
+            padding: 8px 28px;
+            border-radius: 40px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
             background: #ff6b6b;
             color: #fff;
         }
@@ -657,7 +734,9 @@
             box-shadow: 0 0 25px rgba(255, 107, 107, 0.4);
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 600px) {
+            .cookie-banner { left: 10px; right: 10px; bottom: 10px; max-width: none; width: auto; }
+            .vpn-banner { left: 10px; right: 10px; bottom: 10px; max-width: none; width: auto; }
             .card { padding: 24px 18px; }
             .avatar { width: 100px; height: 100px; }
             .name { font-size: 24px; }
@@ -669,7 +748,6 @@
             .modal-box { padding: 20px 15px; }
             .modal-body .data-item { flex-direction: column; align-items: flex-start; gap: 2px; }
             .modal-body .data-item .value { text-align: left; max-width: 100%; }
-            .cookie-banner, .vpn-banner { padding: 15px 18px; }
             .projects-grid { grid-template-columns: 1fr; }
             .loader-title { font-size: 22px; }
             #visualizer { height: 60px; }
@@ -678,8 +756,6 @@
     </style>
 </head>
 <body>
-
-    <!-- ===== ЭКРАН ЗАГРУЗКИ ===== -->
     <div id="loader">
         <div class="loader-title">✦ iemes32 ✦</div>
         <div class="progress-container">
@@ -687,9 +763,9 @@
         </div>
         <div class="progress-text" id="progressText">0%</div>
         <button class="loader-enter-btn" id="enterBtn">Войти</button>
+        <button class="loader-skip-btn" id="skipBtn">Пропустить загрузку</button>
     </div>
 
-    <!-- ===== ФОН ===== -->
     <div class="particles" id="particles"></div>
     <div class="stars" id="stars"></div>
     <div class="neon-lines">
@@ -699,7 +775,6 @@
     </div>
     <canvas id="visualizer"></canvas>
 
-    <!-- ===== ОСНОВНАЯ КАРТОЧКА ===== -->
     <div class="card" id="app">
         <img class="avatar" id="avatar" alt="Аватар" />
         <div class="name" id="name"></div>
@@ -707,17 +782,16 @@
 
         <div class="socials" id="socials"></div>
 
-        <!-- ===== УПРАВЛЕНИЕ ЗВУКОМ ===== -->
         <div class="audio-controls">
             <button id="muteBtn">🔊</button>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.35" />
             <span class="audio-status" id="volumeStatus">35%</span>
         </div>
 
-        <!-- ===== ВКЛАДКИ ===== -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="about">Обо мне</button>
             <button class="tab-btn" data-tab="projects">Мои проекты</button>
+            <!-- <button class="tab-btn" data-tab="album">Альбом</button> -->
         </div>
 
         <div class="tab-content active" id="tab-about">
@@ -731,9 +805,19 @@
         <div class="tab-content" id="tab-projects">
             <div class="projects-grid" id="projectsGrid"></div>
         </div>
+
+        <!-- АЛЬБОМ (скрыт) -->
+        <!--
+        <div class="tab-content" id="tab-album">
+            <div class="album-grid" id="albumGrid">
+                <div class="album-item"><img src="https://via.placeholder.com/300/002b44/2ba1cb?text=Фото+1" alt="Фото 1" /></div>
+                <div class="album-item"><img src="https://via.placeholder.com/300/002b44/2ba1cb?text=Фото+2" alt="Фото 2" /></div>
+                <div class="album-item"><img src="https://via.placeholder.com/300/002b44/2ba1cb?text=Фото+3" alt="Фото 3" /></div>
+            </div>
+        </div>
+        -->
     </div>
 
-    <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <button class="modal-close" id="modalClose">&times;</button>
@@ -742,7 +826,6 @@
         </div>
     </div>
 
-    <!-- ===== COOKIE ===== -->
     <div class="cookie-banner" id="cookieBanner">
         <p>🍪 Вы согласны отдать все ваши cookie?</p>
         <div class="cookie-buttons">
@@ -751,7 +834,6 @@
         </div>
     </div>
 
-    <!-- ===== VPN ===== -->
     <div class="vpn-banner" id="vpnBanner">
         <p>⚠️ Отключите VPN, иначе вам перегрызут интернет.</p>
         <div class="vpn-buttons">
@@ -759,10 +841,8 @@
         </div>
     </div>
 
-    <!-- ===== АУДИО-ЭЛЕМЕНТ (будет использован через fetch+Blob) ===== -->
     <audio id="bg-music" loop></audio>
 
-    <!-- ============================================================ -->
     <!-- ===== ВСЕ НАСТРОЙКИ – МЕНЯЙТЕ ТОЛЬКО ЭТОТ БЛОК ===== -->
     <script>
         const CONFIG = {
@@ -801,6 +881,7 @@
                     image: 'https://github.com/iemes32/iemes32.github.io/blob/main/bio_skrin.png?raw=true'
                 }
             ]
+            // Для альбома добавьте массив photo: [] и используйте в коде
         };
     </script>
     <!-- ===== КОНЕЦ НАСТРОЕК ===== -->
@@ -811,7 +892,6 @@
 
             const c = CONFIG;
 
-            // ---------- FAVICON ----------
             document.getElementById('favicon').href = c.avatar;
 
             // ---------- ЗВЁЗДЫ ----------
@@ -830,7 +910,7 @@
                 }
             })();
 
-            // ---------- ЗАПОЛНЕНИЕ ДАННЫХ ----------
+            // ---------- ЗАПОЛНЕНИЕ ----------
             document.getElementById('name').textContent = c.name;
             document.getElementById('title').textContent = c.title;
 
@@ -862,6 +942,7 @@
             document.getElementById('aboutText').innerHTML = about.text;
             const mediaContainer = document.getElementById('aboutMediaContainer');
             mediaContainer.innerHTML = '';
+            let aboutImgLoaded = false;
             if (about.media && about.media.trim() !== '') {
                 const url = about.media.trim();
                 const ext = url.split('.').pop().toLowerCase();
@@ -874,13 +955,18 @@
                     el.loop = true;
                     el.muted = true;
                     el.className = 'about-media';
+                    el.addEventListener('loadeddata', () => { aboutImgLoaded = true; checkAllLoaded(); });
                 } else {
                     el = document.createElement('img');
                     el.src = url;
                     el.alt = 'Фото';
                     el.className = 'about-media';
+                    el.addEventListener('load', () => { aboutImgLoaded = true; checkAllLoaded(); });
+                    el.addEventListener('error', () => { aboutImgLoaded = true; checkAllLoaded(); });
                 }
                 mediaContainer.appendChild(el);
+            } else {
+                aboutImgLoaded = true;
             }
 
             const projectsGrid = document.getElementById('projectsGrid');
@@ -905,9 +991,20 @@
                 projectsGrid.innerHTML = '<p style="color:#9bb7c9; text-align:center;">Пока нет проектов</p>';
             }
 
-            // ============================================================
-            //  МУЗЫКА через fetch + Blob + AnalyserNode
-            // ============================================================
+            // ---------- АЛЬБОМ (скрыт) ----------
+            /*
+            const albumGrid = document.getElementById('albumGrid');
+            if (albumGrid && c.album && c.album.photos) {
+                c.album.photos.forEach(url => {
+                    const div = document.createElement('div');
+                    div.className = 'album-item';
+                    div.innerHTML = `<img src="${url}" alt="Фото" />`;
+                    albumGrid.appendChild(div);
+                });
+            }
+            */
+
+            // ---------- МУЗЫКА (fetch+Blob) ----------
             const audio = document.getElementById('bg-music');
             let isMuted = false;
             let currentVolume = 0.35;
@@ -920,7 +1017,6 @@
             let audioLoaded = false;
             let audioBlobUrl = null;
 
-            // ---------- Настройка Web Audio ----------
             function setupAudio() {
                 if (audioCtx) return;
                 try {
@@ -929,45 +1025,24 @@
                     analyser.fftSize = 128;
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
                     isAudioReady = true;
-                    console.log('✅ Web Audio настроен');
                 } catch (e) {
-                    console.warn('⚠️ Web Audio не поддерживается:', e);
+                    console.warn('Web Audio не поддерживается');
                 }
             }
 
-            // ---------- Загрузка и воспроизведение через fetch + Blob ----------
-            let playPromise = null;
+            let musicLoaded = false;
 
-            function loadAndPlayMusic() {
-                if (audioLoaded && !audio.paused) {
-                    // уже играет
-                    return;
-                }
-
-                if (audioLoaded && audio.paused) {
-                    // на паузе – просто возобновляем
-                    audio.play().catch(e => console.warn(e));
-                    return;
-                }
-
-                // Первая загрузка
-                const statusEl = document.getElementById('volumeStatus');
-                statusEl.textContent = 'Загрузка...';
-
-                fetch(c.music)
+            function loadMusic() {
+                if (musicLoaded) return Promise.resolve();
+                return fetch(c.music)
                     .then(response => {
                         if (!response.ok) throw new Error(`HTTP ${response.status}`);
                         return response.blob();
                     })
                     .then(blob => {
-                        if (!blob.type.startsWith('audio/')) {
-                            console.warn('Сервер вернул MIME:', blob.type);
-                        }
                         audioBlobUrl = URL.createObjectURL(blob);
                         audio.src = audioBlobUrl;
                         audio.load();
-
-                        // Настраиваем Web Audio
                         setupAudio();
                         if (audioCtx) {
                             try {
@@ -976,27 +1051,24 @@
                                 analyser.connect(audioCtx.destination);
                                 isAudioReady = true;
                             } catch (e) {
-                                console.warn('Не удалось подключить AnalyserNode:', e);
+                                console.warn('Не удалось подключить AnalyserNode');
                             }
                         }
-
                         audioLoaded = true;
-
-                        // Воспроизводим
-                        if (audioCtx && audioCtx.state === 'suspended') {
-                            audioCtx.resume().then(() => {
-                                audio.play().catch(e => console.warn(e));
-                            }).catch(e => console.warn(e));
-                        } else {
-                            audio.play().catch(e => console.warn(e));
-                        }
-
-                        statusEl.textContent = Math.round(currentVolume * 100) + '%';
-                    })
-                    .catch(err => {
-                        console.error('Ошибка загрузки музыки:', err);
-                        statusEl.textContent = '❌ Ошибка';
+                        musicLoaded = true;
+                        return true;
                     });
+            }
+
+            function startMusic() {
+                if (!audioLoaded) return;
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(() => {
+                        audio.play().catch(() => {});
+                    }).catch(() => {});
+                } else {
+                    audio.play().catch(() => {});
+                }
             }
 
             // ---------- УПРАВЛЕНИЕ ЗВУКОМ ----------
@@ -1045,7 +1117,7 @@
             volumeSlider.value = currentVolume;
             volumeStatus.textContent = '35%';
 
-            // ---------- ВИЗУАЛИЗАТОР (Canvas) ----------
+            // ---------- ВИЗУАЛИЗАТОР ----------
             const canvas = document.getElementById('visualizer');
             const ctx = canvas.getContext('2d');
             let width, height;
@@ -1059,7 +1131,6 @@
             resizeCanvas();
 
             function drawVisualizer() {
-                // Если музыка не готова или нет данных – рисуем заглушку
                 if (!isAudioReady || !analyser || !dataArray) {
                     ctx.clearRect(0, 0, width, height);
                     const barWidth = (width / 64) * 0.8;
@@ -1078,7 +1149,6 @@
                     return;
                 }
 
-                // Режим с музыкой – рисуем по частотам
                 analyser.getByteFrequencyData(dataArray);
                 ctx.clearRect(0, 0, width, height);
 
@@ -1100,7 +1170,6 @@
                     ctx.fillRect(x, height - barHeight, barWidth, barHeight);
                 }
 
-                // Пульсация частиц в такт музыке
                 const avg = sum / bufferLength / 255;
                 document.querySelector('.card').style.animationDuration = (4 + (1 - avg) * 2) + 's';
                 const particles = document.querySelectorAll('.particle');
@@ -1112,13 +1181,9 @@
 
                 requestAnimationFrame(drawVisualizer);
             }
-
-            // Запускаем визуализатор (сразу)
             drawVisualizer();
 
-            // ============================================================
-            //  МОДАЛЬНОЕ ОКНО (Telegram)
-            // ============================================================
+            // ---------- МОДАЛЬНОЕ ОКНО ----------
             const modalOverlay = document.getElementById('modalOverlay');
             const modalBody = document.getElementById('modalBody');
             const modalClose = document.getElementById('modalClose');
@@ -1199,30 +1264,17 @@
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
 
-            // ============================================================
-            //  ЗАГРУЗЧИК + ВХОД
-            // ============================================================
+            // ---------- ЗАГРУЗЧИК С РЕАЛЬНЫМ ПРОГРЕССОМ ----------
             const loader = document.getElementById('loader');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
             const enterBtn = document.getElementById('enterBtn');
+            const skipBtn = document.getElementById('skipBtn');
 
             let progress = 0;
             let intervalId = null;
             let loaderHidden = false;
-
-            function simulateProgress() {
-                intervalId = setInterval(() => {
-                    if (progress < 90) {
-                        progress += Math.floor(Math.random() * 6) + 2;
-                        if (progress > 90) progress = 90;
-                        updateProgress(progress);
-                    } else {
-                        clearInterval(intervalId);
-                        intervalId = null;
-                    }
-                }, 200);
-            }
+            let allLoaded = false;
 
             function updateProgress(value) {
                 const clamped = Math.min(100, Math.max(0, value));
@@ -1235,49 +1287,83 @@
 
             function enableEnterButton() {
                 enterBtn.classList.add('active');
+                skipBtn.classList.remove('active');
+                skipBtn.style.display = 'none';
             }
+
+            function checkAllLoaded() {
+                if (allLoaded) return;
+                // Проверяем загрузку аватара, фото в "Обо мне" и музыки
+                let avatarLoaded = false;
+                const avatarImg = document.getElementById('avatar');
+                if (avatarImg.complete && avatarImg.naturalWidth > 0) avatarLoaded = true;
+
+                if (avatarLoaded && aboutImgLoaded && musicLoaded) {
+                    allLoaded = true;
+                    progress = 100;
+                    updateProgress(100);
+                } else {
+                    // Обновляем прогресс в зависимости от загруженных ресурсов
+                    let loadedCount = 0;
+                    let total = 3;
+                    if (avatarLoaded) loadedCount++;
+                    if (aboutImgLoaded) loadedCount++;
+                    if (musicLoaded) loadedCount++;
+                    progress = Math.min(90, Math.floor((loadedCount / total) * 90));
+                    updateProgress(progress);
+                }
+            }
+
+            // Отслеживаем загрузку аватара
+            const avatarImg = document.getElementById('avatar');
+            avatarImg.addEventListener('load', () => { checkAllLoaded(); });
+            avatarImg.addEventListener('error', () => { checkAllLoaded(); });
+
+            // Загружаем музыку
+            loadMusic().then(() => {
+                checkAllLoaded();
+            }).catch(() => {
+                // Если музыка не загрузилась, всё равно продолжаем
+                musicLoaded = true;
+                checkAllLoaded();
+            });
+
+            // Таймер на 10 секунд – показываем кнопку "Пропустить"
+            setTimeout(() => {
+                if (!allLoaded) {
+                    skipBtn.classList.add('active');
+                    skipBtn.style.display = 'inline-block';
+                }
+            }, 10000);
+
+            skipBtn.addEventListener('click', function() {
+                if (loaderHidden) return;
+                loaderHidden = true;
+                loader.classList.add('hidden');
+                if (!musicLoaded) {
+                    // Пытаемся загрузить музыку принудительно
+                    loadMusic().then(() => {
+                        startMusic();
+                    });
+                } else {
+                    startMusic();
+                }
+                setTimeout(showCookieBanner, 3000);
+                checkVPN();
+            });
 
             function enterSite() {
                 if (loaderHidden) return;
                 loaderHidden = true;
                 loader.classList.add('hidden');
-
-                // Загружаем и запускаем музыку
-                if (c.music && c.music.trim() !== '') {
-                    loadAndPlayMusic();
-                }
-
+                startMusic();
                 setTimeout(showCookieBanner, 3000);
                 checkVPN();
             }
 
-            window.addEventListener('load', function() {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                    intervalId = null;
-                }
-                progress = 100;
-                updateProgress(100);
-                enableEnterButton();
-            });
-
-            setTimeout(() => {
-                if (progress < 100) {
-                    if (intervalId) {
-                        clearInterval(intervalId);
-                        intervalId = null;
-                    }
-                    progress = 100;
-                    updateProgress(100);
-                }
-            }, 10000);
-
-            simulateProgress();
             enterBtn.addEventListener('click', enterSite);
 
-            // ============================================================
-            //  COOKIE
-            // ============================================================
+            // ---------- COOKIE ----------
             const cookieBanner = document.getElementById('cookieBanner');
             const cookieYes = document.getElementById('cookieYes');
             const cookieAbsolutely = document.getElementById('cookieAbsolutely');
@@ -1294,9 +1380,7 @@
             cookieYes.addEventListener('click', acceptCookies);
             cookieAbsolutely.addEventListener('click', acceptCookies);
 
-            // ============================================================
-            //  VPN
-            // ============================================================
+            // ---------- VPN ----------
             const vpnBanner = document.getElementById('vpnBanner');
             const vpnClose = document.getElementById('vpnClose');
 
@@ -1318,13 +1402,12 @@
                 vpnBanner.style.display = 'none';
             });
 
-            // ============================================================
-            //  ВКЛАДКИ
-            // ============================================================
+            // ---------- ВКЛАДКИ ----------
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = {
                 about: document.getElementById('tab-about'),
                 projects: document.getElementById('tab-projects')
+                // album: document.getElementById('tab-album')
             };
 
             tabBtns.forEach(btn => {
@@ -1337,16 +1420,12 @@
                 });
             });
 
-            // ============================================================
-            //  ФОН
-            // ============================================================
+            // ---------- ФОН ----------
             if (c.backgroundImage && c.backgroundImage.trim() !== '') {
                 document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
             }
 
-            // ============================================================
-            //  ЧАСТИЦЫ
-            // ============================================================
+            // ---------- ЧАСТИЦЫ ----------
             (function createParticles() {
                 const container = document.getElementById('particles');
                 for (let i = 0; i < 55; i++) {
