@@ -1,4 +1,11 @@
-✡️ iemes32 bio — ну, сайт-визитка, типа того
+<p align="center">
+  <img src="https://github.com/iemes32/iemes32.github.io/blob/main/ava.png?raw=true" alt="iemes32" width="150" style="border-radius: 50%; box-shadow: 0 0 30px rgba(43, 161, 203, 0.5);" />
+</p>
+
+<p align="center">
+  <strong>✡️ iemes32</strong><br>
+  <em>ну, сайт-визитка, типа того</em>
+</p>
 
 А вы думали, тут будет что-то серьёзное? Ну, нет. Просто неон, музыка и немного еврейского юмора.
 
