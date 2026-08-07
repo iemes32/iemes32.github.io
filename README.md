@@ -2,12 +2,12 @@
 
 А вы думали, тут будет что-то серьёзное? Ну, нет. Просто неон, музыка и немного еврейского юмора.
 
-https://img.shields.io/badge/GitHub-Pages-2ba1cb?style=flat-square&logo=github
-https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white
-https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white
-https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black
-https://img.shields.io/badge/license-MIT-blue?style=flat-square
-https://img.shields.io/badge/oy-vey-red?style=flat-square
+![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-2ba1cb?style=flat-square&logo=github)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+![Oy Vey](https://img.shields.io/badge/oy-vey-red?style=flat-square)
 
 🔗 Ну, зайди, посмотри: iemes32.github.io
 
