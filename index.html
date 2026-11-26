@@ -6,7 +6,7 @@
     <title>iemes32 bio</title>
     <link rel="icon" id="favicon" href="" type="image/png" />
     <style>
-        /* ===== СТИЛИ ЗАГРУЗЧИКА (без изменений) ===== */
+        /* ===== ЗАГРУЗЧИК ===== */
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 30%, #002b44, #0e1419 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #loader.hidden { opacity: 0; pointer-events: none; }
         .loader-title { font-size: 28px; font-weight: 300; color: #e0f0fa; letter-spacing: 4px; margin-bottom: 30px; text-shadow: 0 0 20px rgba(43, 161, 203, 0.3); }
@@ -20,10 +20,11 @@
         .loader-skip-btn.active { opacity: 1; pointer-events: auto; display: inline-block; }
         .loader-skip-btn:hover { background: rgba(255, 107, 107, 0.3); }
 
-        /* ===== ОБЩИЕ СТИЛИ ===== */
+        /* ===== ОБЩИЕ ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: radial-gradient(circle at 30% 30%, #002b44, #0e1419 80%); color: #fff; padding: 20px; position: relative; overflow-x: hidden; animation: bgPulse 8s ease-in-out infinite alternate; }
         @keyframes bgPulse { 0% { background: radial-gradient(circle at 20% 20%, #002b44, #0e1419 80%); } 100% { background: radial-gradient(circle at 80% 80%, #003b5c, #0a1a22 80%); } }
+        body.lightbox-open { overflow: hidden; }
 
         .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
         .particle { position: absolute; background: rgba(43, 161, 203, 0.6); border-radius: 50%; box-shadow: 0 0 15px #2ba1cb; animation: floatParticle linear infinite; transition: transform 0.1s, opacity 0.1s; }
@@ -45,6 +46,9 @@
         @keyframes glowPulse { 0% { box-shadow: 0 20px 60px rgba(0, 43, 68, 0.8), 0 0 40px rgba(43, 161, 203, 0.2); } 100% { box-shadow: 0 30px 80px rgba(0, 43, 68, 0.9), 0 0 70px rgba(43, 161, 203, 0.4); } }
         .card:hover { transform: translateY(-5px); box-shadow: 0 30px 80px rgba(0, 43, 68, 0.9), 0 0 60px rgba(43, 161, 203, 0.3); }
 
+        .lang-toggle { position: absolute; top: 18px; right: 18px; background: rgba(43, 161, 203, 0.1); border: 1px solid rgba(43, 161, 203, 0.3); color: #9bb7c9; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 1px; transition: all 0.3s; z-index: 5; font-family: inherit; }
+        .lang-toggle:hover { background: rgba(43, 161, 203, 0.25); color: #fff; border-color: #2ba1cb; box-shadow: 0 0 15px rgba(43, 161, 203, 0.3); }
+
         .avatar { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; margin: 0 auto 20px; display: block; border: 3px solid #2ba1cb; box-shadow: 0 0 30px rgba(43, 161, 203, 0.5), inset 0 0 20px rgba(43, 161, 203, 0.2); transition: box-shadow 0.3s ease, transform 0.3s ease; animation: pulseBorder 3s ease-in-out infinite; }
         .avatar:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.4); }
         @keyframes pulseBorder { 0%, 100% { box-shadow: 0 0 20px rgba(43, 161, 203, 0.4), inset 0 0 10px rgba(43, 161, 203, 0.1); } 50% { box-shadow: 0 0 50px rgba(43, 161, 203, 0.8), inset 0 0 30px rgba(43, 161, 203, 0.3); } }
@@ -53,7 +57,7 @@
         .title { font-size: 16px; color: #9bb7c9; margin-bottom: 20px; letter-spacing: 1px; font-weight: 300; border-bottom: 1px solid rgba(43, 161, 203, 0.2); padding-bottom: 15px; }
 
         .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn { padding: 8px 24px; background: rgba(43, 161, 203, 0.08); border: 1px solid rgba(43, 161, 203, 0.2); border-radius: 40px; color: #9bb7c9; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(4px); }
+        .tab-btn { padding: 8px 24px; background: rgba(43, 161, 203, 0.08); border: 1px solid rgba(43, 161, 203, 0.2); border-radius: 40px; color: #9bb7c9; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(4px); font-family: inherit; }
         .tab-btn:hover { background: rgba(43, 161, 203, 0.15); border-color: #2ba1cb; color: #fff; }
         .tab-btn.active { background: rgba(43, 161, 203, 0.2); border-color: #2ba1cb; color: #fff; box-shadow: 0 0 20px rgba(43, 161, 203, 0.2); }
 
@@ -71,56 +75,53 @@
         .project-card a { color: #2ba1cb; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.3s; }
         .project-card a:hover { color: #3fc3f0; text-decoration: underline; }
 
-        /* ===== АЛЬБОМ (ВКЛЮЧЁН) ===== */
-        .album-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
-            grid-auto-flow: dense; /* автоматически заполняет пустоты */
-            grid-auto-rows: 10px; /* мелкая единица для точной подгонки */
-        }
-        .album-item {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(43, 161, 203, 0.2);
-            background: rgba(0, 43, 68, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-        .album-item:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 25px rgba(43, 161, 203, 0.3);
-            z-index: 2;
-        }
-        .album-item img,
-        .album-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            background: #0e1419;
-        }
-        /* Классы ориентации — задаются после загрузки */
-        .album-item.portrait {
-            grid-row: span 22; /* примерно 2 ряда при высоте 10px + gap */
-        }
-        .album-item.square {
-            grid-row: span 11; /* 1 ряд */
-        }
-        .album-item.landscape {
-            grid-row: span 11; /* 1 ряд, но можно и 2 колонки при желании */
-        }
+        /* ===== АЛЬБОМ ===== */
+        .album-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; flex-wrap: wrap; }
+        .album-settings-toggle { padding: 6px 16px; background: rgba(43, 161, 203, 0.08); border: 1px solid rgba(43, 161, 203, 0.25); border-radius: 40px; color: #9bb7c9; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; transition: all 0.25s ease; }
+        .album-settings-toggle:hover, .album-settings-toggle.active { background: rgba(43, 161, 203, 0.2); border-color: #2ba1cb; color: #fff; box-shadow: 0 0 20px rgba(43, 161, 203, 0.2); }
+        .album-count { font-size: 12px; color: #7f9aab; letter-spacing: 0.5px; }
 
-        .album-empty {
-            text-align: center;
-            color: #9bb7c9;
-            padding: 40px 0;
-            font-size: 15px;
-        }
+        .album-settings-panel { display: none; background: rgba(0, 43, 68, 0.3); border: 1px solid rgba(43, 161, 203, 0.15); border-radius: 16px; padding: 10px 16px; margin-bottom: 14px; animation: fadeIn 0.3s ease; }
+        .album-settings-panel.active { display: block; }
+        .album-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; font-size: 14px; color: #c8dde8; }
+        .album-setting-row + .album-setting-row { border-top: 1px solid rgba(43, 161, 203, 0.08); }
+        .album-setting-row select { background: rgba(14, 25, 29, 0.9); color: #e0f0fa; border: 1px solid rgba(43, 161, 203, 0.3); border-radius: 8px; padding: 5px 10px; font-size: 13px; font-family: inherit; outline: none; cursor: pointer; }
+        .album-setting-row select:focus { border-color: #2ba1cb; }
 
-        /* ===== СОЦИАЛЬНЫЕ ССЫЛКИ, АУДИО, МОДАЛЬНОЕ ОКНО, БАННЕРЫ (без изменений) ===== */
+        .switch { position: relative; display: inline-block; width: 42px; height: 22px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .switch span { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(43, 161, 203, 0.25); border-radius: 22px; cursor: pointer; transition: all 0.25s ease; }
+        .switch span::before { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: #9bb7c9; border-radius: 50%; transition: all 0.25s ease; }
+        .switch input:checked + span { background: rgba(43, 161, 203, 0.55); border-color: #2ba1cb; }
+        .switch input:checked + span::before { transform: translateX(20px); background: #fff; }
+
+        .album-grid { display: flex; align-items: flex-start; gap: var(--album-gap, 12px); margin-top: 4px; }
+        .album-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--album-gap, 12px); }
+        .album-item { position: relative; width: 100%; border-radius: 16px; overflow: hidden; border: 1px solid rgba(43, 161, 203, 0.2); background: rgba(0, 43, 68, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; animation: albumItemIn 0.4s ease both; }
+        @keyframes albumItemIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .album-item:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(43, 161, 203, 0.3); z-index: 2; }
+        .album-item img, .album-item video { display: block; width: 100%; height: 100%; object-fit: cover; background: #0e1419; }
+        .album-item img { -webkit-user-select: none; user-select: none; }
+        .album-empty { text-align: center; color: #9bb7c9; padding: 40px 0; font-size: 15px; }
+        .album-empty code { color: #2ba1cb; }
+        .album-loader { text-align: center; padding: 18px 0; font-size: 13px; color: #7f9aab; letter-spacing: 1px; }
+        .album-sentinel { width: 100%; height: 1px; }
+
+        /* ===== ЛАЙТБОКС ===== */
+        .lightbox { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; padding: 4vh 4vw; }
+        .lightbox.active { display: flex; animation: lbIn 0.25s ease; }
+        @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
+        .lightbox-img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 10px; box-shadow: 0 0 80px rgba(43, 161, 203, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8); animation: lbImgIn 0.3s ease; }
+        @keyframes lbImgIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .lightbox-close { position: absolute; top: 18px; right: 24px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(43, 161, 203, 0.4); color: #fff; font-size: 34px; line-height: 1; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.25s ease; z-index: 2; }
+        .lightbox-close:hover { background: rgba(43, 161, 203, 0.4); transform: rotate(90deg); }
+        .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(43, 161, 203, 0.15); border: 1px solid rgba(43, 161, 203, 0.5); color: #fff; font-size: 34px; line-height: 1; width: 52px; height: 52px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.25s ease; z-index: 2; }
+        .lightbox-nav:hover { background: rgba(43, 161, 203, 0.4); box-shadow: 0 0 25px rgba(43, 161, 203, 0.4); }
+        .lightbox-prev { left: 18px; }
+        .lightbox-next { right: 18px; }
+        .lightbox-counter { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(43, 161, 203, 0.3); color: #c8dde8; font-size: 13px; padding: 6px 16px; border-radius: 20px; letter-spacing: 1px; }
+
+        /* ===== СОЦСЕТИ / АУДИО / МОДАЛКА / БАННЕРЫ ===== */
         .socials { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 15px 0 20px; }
         .social-link { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 22px; border-radius: 60px; background: rgba(43, 161, 203, 0.08); border: 1px solid rgba(43, 161, 203, 0.25); color: #e0f0fa; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.25s ease; backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); min-width: 90px; cursor: pointer; }
         .social-link:hover { background: rgba(43, 161, 203, 0.2); border-color: #2ba1cb; box-shadow: 0 0 30px rgba(43, 161, 203, 0.3); transform: translateY(-3px) scale(1.03); color: #ffffff; }
@@ -187,7 +188,14 @@
             .projects-grid { grid-template-columns: 1fr; }
             .loader-title { font-size: 22px; }
             #visualizer { height: 60px; }
-            .album-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+            .album-setting-row { font-size: 13px; }
+            .lang-toggle { top: 10px; right: 10px; padding: 5px 11px; font-size: 11px; }
+            .lightbox { padding: 2vh 2vw; }
+            .lightbox-close { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 28px; }
+            .lightbox-nav { width: 40px; height: 40px; font-size: 26px; }
+            .lightbox-prev { left: 8px; }
+            .lightbox-next { right: 8px; }
+            .lightbox-counter { bottom: 10px; font-size: 12px; padding: 4px 12px; }
         }
         #bg-music { display: none; }
     </style>
@@ -213,6 +221,7 @@
     <canvas id="visualizer"></canvas>
 
     <div class="card" id="app">
+        <button class="lang-toggle" id="langToggle" title="Language">EN</button>
         <img class="avatar" id="avatar" alt="Аватар" />
         <div class="name" id="name"></div>
         <div class="title" id="title"></div>
@@ -243,23 +252,52 @@
             <div class="projects-grid" id="projectsGrid"></div>
         </div>
 
-        <!-- ===== АЛЬБОМ (ВКЛЮЧЁН) ===== -->
         <div class="tab-content" id="tab-album">
+            <div class="album-toolbar">
+                <button class="album-settings-toggle" id="albumSettingsBtn">⚙ Настройки альбома</button>
+                <span class="album-count" id="albumCount"></span>
+            </div>
+
+            <div class="album-settings-panel" id="albumSettingsPanel">
+                <div class="album-setting-row">
+                    <label id="albumSortLabel" for="albumSort">Сортировка</label>
+                    <select id="albumSort">
+                        <option id="albumSortNameAsc" value="name-asc">По имени (0 → 9)</option>
+                        <option id="albumSortNameDesc" value="name-desc">По имени (9 → 0)</option>
+                        <option id="albumSortNone" value="none">Как отдал GitHub</option>
+                    </select>
+                </div>
+                <div class="album-setting-row">
+                    <label id="albumAutoplayLabel" for="albumAutoplay">Автовоспроизведение видео</label>
+                    <label class="switch"><input type="checkbox" id="albumAutoplay"><span></span></label>
+                </div>
+                <div class="album-setting-row">
+                    <label id="albumMutedLabel" for="albumMuted">Видео без звука</label>
+                    <label class="switch"><input type="checkbox" id="albumMuted"><span></span></label>
+                </div>
+                <div class="album-setting-row">
+                    <label id="albumLoopLabel" for="albumLoop">Зацикливать видео</label>
+                    <label class="switch"><input type="checkbox" id="albumLoop"><span></span></label>
+                </div>
+            </div>
+
             <div class="album-grid" id="albumGrid"></div>
-            <div class="album-empty" id="albumEmpty" style="display:none;">Пока нет фотографий в корневой папке репозитория.</div>
+            <div class="album-empty" id="albumEmpty" style="display:none;"></div>
+            <div class="album-loader" id="albumLoader" style="display:none;">Загрузка…</div>
+            <div class="album-sentinel" id="albumSentinel"></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <button class="modal-close" id="modalClose">&times;</button>
-            <div class="modal-title">📡 Данные о вашем ПК</div>
+            <div class="modal-title" id="modalTitle">📡 Данные о вашем ПК</div>
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
     <div class="cookie-banner" id="cookieBanner">
-        <p>🍪 Вы согласны отдать все ваши cookie?</p>
+        <p id="cookieText">🍪 Вы согласны отдать все ваши cookie?</p>
         <div class="cookie-buttons">
             <button class="btn-yes" id="cookieYes">Да</button>
             <button class="btn-absolutely" id="cookieAbsolutely">КОНЧЕНО ДА</button>
@@ -267,19 +305,30 @@
     </div>
 
     <div class="vpn-banner" id="vpnBanner">
-        <p>⚠️ Отключите VPN, иначе вам перегрызут интернет.</p>
+        <p id="vpnText">⚠️ Отключите VPN, иначе вам перегрызут интернет.</p>
         <div class="vpn-buttons">
             <button class="btn-close-vpn" id="vpnClose">Понял, отключаю</button>
         </div>
     </div>
 
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">‹</button>
+        <img class="lightbox-img" id="lightboxImg" alt="" />
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">›</button>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+
     <audio id="bg-music" loop></audio>
 
-    <!-- ===== ВСЕ НАСТРОЙКИ – МЕНЯЙТЕ ТОЛЬКО ЭТОТ БЛОК ===== -->
+    <!-- ============================================================
+         CONFIG — ТЕХНИЧЕСКИЕ НАСТРОЙКИ (URL, пути, ID)
+         Здесь только ссылки, картинки и технические настройки.
+         ВЕСЬ ТЕКСТ — В БЛОКЕ I18N НИЖЕ.
+         ============================================================ -->
     <script>
         const CONFIG = {
             name: 'iemes32',
-            title: '✦ Ку 👋 ✦',
             avatar: 'https://github.com/iemes32/iemes32.github.io/blob/main/ava.png?raw=true',
             music: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/main/music/Dane%20Whisper%20-%20Planet%20V%20.mp3',
             backgroundImage: '',
@@ -300,82 +349,324 @@
                     icon: '<img src="https://steamcommunity.com/favicon.ico" alt="Steam">'
                 }
             ],
-            about: {
-                title: 'Об мне',
-                text: 'Тут должен быть текст',
-                media: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/refs/heads/main/image.webp?raw=true'
-            },
+            aboutMedia: 'https://raw.githubusercontent.com/iemes32/iemes32.github.io/refs/heads/main/image.webp?raw=true',
             projects: [
                 {
-                    title: 'Сайт-визитка',
-                    description: 'Личная сайт-визитка и по совместительству первый публичный проект. https://github.com/iemes32/iemes32.github.io ',
-                    link: 'https://iemes32.github.io',
-                    image: 'https://github.com/iemes32/iemes32.github.io/blob/main/bio_skrin.png?raw=true'
+                    image: 'https://github.com/iemes32/iemes32.github.io/blob/main/bio_skrin.png?raw=true',
+                    link: 'https://iemes32.github.io'
                 }
             ],
-
-            /* ============================================================
-               НАСТРОЙКИ АЛЬБОМА
-               ============================================================
-               autoLoad: true  — автоматически загружать список файлов из репозитория
-               repoOwner: 'iemes32'        — владелец репозитория
-               repoName: 'iemes32.github.io' — имя репозитория
-               branch: 'main'              — ветка (обычно main или master)
-               path: ''                    — папка внутри репозитория ('' = корень)
-
-               sort: 'name-asc'   — сортировка:
-                   'name-asc'  — по имени (photo_000 → photo_001 → ...)
-                   'name-desc' — по имени в обратном порядке
-                   'date-asc'  — по дате изменения (сначала старые)
-                   'date-desc' — по дате изменения (сначала новые)
-                   'none'      — в порядке, который вернул GitHub API
-
-               columns: 3          — количество колонок на десктопе (на мобильных
-                                     автоматически уменьшается)
-               gap: '12px'         — отступ между элементами
-               portraitSpan: 22    — сколько «рядов» занимает вертикальное фото
-               squareSpan: 11      — сколько «рядов» занимает квадратное/горизонтальное
-                                     (ряды = grid-auto-rows: 10px + gap)
-
-               videoAutoplay: true — автоматически проигрывать видео в альбоме
-               videoMuted: true    — видео без звука (рекомендуется true)
-               videoLoop: true     — зацикливать видео
-
-               filePrefix: 'photo_' — учитываются только файлы, начинающиеся с этого префикса
-               imageExtensions: ['png','jpg','jpeg','webp','gif']
-               videoExtensions: ['mp4','webm','ogg','mov']
-               ============================================================ */
             album: {
                 autoLoad: true,
                 repoOwner: 'iemes32',
                 repoName: 'iemes32.github.io',
                 branch: 'main',
                 path: '',
-                sort: 'name-asc',
-                columns: 3,
-                gap: '12px',
-                portraitSpan: 22,
-                squareSpan: 11,
-                videoAutoplay: true,
-                videoMuted: true,
-                videoLoop: true,
                 filePrefix: 'photo_',
                 imageExtensions: ['png', 'jpg', 'jpeg', 'webp', 'gif'],
-                videoExtensions: ['mp4', 'webm', 'ogg', 'mov']
+                videoExtensions: ['mp4', 'webm', 'ogg', 'mov'],
+                batchSize: 12,
+                gap: '12px',
+                defaults: {
+                    sort: 'name-asc',
+                    autoplay: false,
+                    muted: true,
+                    loop: true
+                }
             }
         };
     </script>
-    <!-- ===== КОНЕЦ НАСТРОЕК ===== -->
 
+    <!-- ============================================================
+         I18N — ВЕСЬ ТЕКСТ ИНТЕРФЕЙСА
+         Меняйте/переводите текст прямо здесь.
+         Чтобы добавить язык — скопируйте блок целиком и замените
+         ключ (ru/en) и тексты. Затем добавьте код языка в CIS_LANGS
+         и в логику detectLanguage ниже.
+         ============================================================ -->
+    <script>
+        const I18N = {
+            ru: {
+                loader: {
+                    enter: 'Войти',
+                    skip: 'Пропустить загрузку'
+                },
+                tabs: {
+                    about: 'Обо мне',
+                    projects: 'Мои проекты',
+                    album: 'Альбом'
+                },
+                about: {
+                    title: 'Об мне',
+                    text: 'Тут должен быть текст'
+                },
+                projects: [
+                    {
+                        title: 'Сайт-визитка',
+                        description: 'Личная сайт-визитка и по совместительству первый публичный проект. https://github.com/iemes32/iemes32.github.io'
+                    }
+                ],
+                projectLink: 'Перейти →',
+                noProjects: 'Пока нет проектов',
+                album: {
+                    settingsBtn: '⚙ Настройки альбома',
+                    sortLabel: 'Сортировка',
+                    sortNameAsc: 'По имени (0 → 9)',
+                    sortNameDesc: 'По имени (9 → 0)',
+                    sortNone: 'Как отдал GitHub',
+                    autoplayLabel: 'Автовоспроизведение видео',
+                    mutedLabel: 'Видео без звука',
+                    loopLabel: 'Зацикливать видео',
+                    emptyAutoOff: 'Автозагрузка альбома отключена в настройках.',
+                    emptyNoFiles: 'Пока нет файлов с поддерживаемым расширением.',
+                    emptyNoPrefix: 'В репозитории нет файлов <code>{prefix}*</code> с поддерживаемым расширением.',
+                    emptyError: 'Не удалось загрузить альбом. Проверьте настройки или подключение.',
+                    loading: 'Загрузка…',
+                    count: '{shown} / {total}'
+                },
+                cookies: {
+                    text: '🍪 Вы согласны отдать все ваши cookie?',
+                    yes: 'Да',
+                    absolutely: 'КОНЧЕНО ДА'
+                },
+                vpn: {
+                    text: '⚠️ Отключите VPN, иначе вам перегрызут интернет.',
+                    close: 'Понял, отключаю'
+                },
+                modal: {
+                    title: '📡 Данные о вашем ПК',
+                    ip: 'IP-адрес',
+                    browser: 'Браузер',
+                    os: 'Операционная система',
+                    platform: 'Платформа',
+                    language: 'Язык',
+                    timezone: 'Часовой пояс',
+                    cookies: 'Cookies включены',
+                    online: 'Онлайн',
+                    screenRes: 'Разрешение экрана',
+                    availArea: 'Доступная область',
+                    colorDepth: 'Глубина цвета',
+                    deviceMemory: 'Память устройства',
+                    cpuCores: 'Ядер процессора',
+                    network: 'Тип сети',
+                    userAgent: 'User-Agent',
+                    datetime: 'Дата и время',
+                    favColor: 'Ваш любимый цвет',
+                    speed: 'Скорость интернета',
+                    speedUnit: 'Мбит/с (приблизительно)',
+                    yes: 'Да',
+                    no: 'Нет',
+                    unknown: 'не известно',
+                    bit: 'бит',
+                    gb: 'ГБ'
+                },
+                langToggleLabel: 'EN'
+            },
+            en: {
+                loader: {
+                    enter: 'Enter',
+                    skip: 'Skip loading'
+                },
+                tabs: {
+                    about: 'About',
+                    projects: 'My Projects',
+                    album: 'Album'
+                },
+                about: {
+                    title: 'About me',
+                    text: 'Text should be here'
+                },
+                projects: [
+                    {
+                        title: 'Business card site',
+                        description: 'Personal business card site and my first public project. https://github.com/iemes32/iemes32.github.io'
+                    }
+                ],
+                projectLink: 'Go →',
+                noProjects: 'No projects yet',
+                album: {
+                    settingsBtn: '⚙ Album settings',
+                    sortLabel: 'Sorting',
+                    sortNameAsc: 'By name (0 → 9)',
+                    sortNameDesc: 'By name (9 → 0)',
+                    sortNone: 'As GitHub returned',
+                    autoplayLabel: 'Autoplay video',
+                    mutedLabel: 'Mute video',
+                    loopLabel: 'Loop video',
+                    emptyAutoOff: 'Album autoload is disabled in settings.',
+                    emptyNoFiles: 'No files with a supported extension yet.',
+                    emptyNoPrefix: 'No files matching <code>{prefix}*</code> with a supported extension.',
+                    emptyError: 'Failed to load album. Check settings or connection.',
+                    loading: 'Loading…',
+                    count: '{shown} / {total}'
+                },
+                cookies: {
+                    text: '🍪 Do you agree to give away all your cookies?',
+                    yes: 'Yes',
+                    absolutely: 'ABSOLUTELY YES'
+                },
+                vpn: {
+                    text: '⚠️ Turn off VPN, otherwise your internet will be chewed up.',
+                    close: 'Got it, turning off'
+                },
+                modal: {
+                    title: '📡 Your PC data',
+                    ip: 'IP address',
+                    browser: 'Browser',
+                    os: 'Operating system',
+                    platform: 'Platform',
+                    language: 'Language',
+                    timezone: 'Timezone',
+                    cookies: 'Cookies enabled',
+                    online: 'Online',
+                    screenRes: 'Screen resolution',
+                    availArea: 'Available area',
+                    colorDepth: 'Color depth',
+                    deviceMemory: 'Device memory',
+                    cpuCores: 'CPU cores',
+                    network: 'Network type',
+                    userAgent: 'User-Agent',
+                    datetime: 'Date & time',
+                    favColor: 'Your favorite color',
+                    speed: 'Internet speed',
+                    speedUnit: 'Mbps (approximate)',
+                    yes: 'Yes',
+                    no: 'No',
+                    unknown: 'unknown',
+                    bit: 'bit',
+                    gb: 'GB'
+                },
+                langToggleLabel: 'RU'
+            }
+        };
+    </script>
+
+    <!-- ============================================================
+         ОСНОВНАЯ ЛОГИКА
+         ============================================================ -->
     <script>
         (function() {
             'use strict';
 
             const c = CONFIG;
+            let currentLang = 'ru';
 
             document.getElementById('favicon').href = c.avatar;
 
-            /* ---------- ЗВЁЗДЫ ---------- */
+            /* ============================================================
+               ОПРЕДЕЛЕНИЕ ЯЗЫКА
+               CIS-языки и CIS-страны → русский.
+               Если браузер CIS → русский (даже если IP не CIS — VPN).
+               Если браузер не CIS, но IP CIS → русский.
+               Иначе → английский.
+               Ручной выбор в localStorage всегда приоритетнее.
+               ============================================================ */
+            const CIS_LANGS = ['ru', 'uk', 'be', 'kk', 'uz', 'ky', 'tg', 'tk', 'az', 'hy', 'ka', 'mo'];
+            const CIS_COUNTRIES = ['RU', 'UA', 'BY', 'KZ', 'UZ', 'KG', 'TJ', 'TM', 'AZ', 'AM', 'MD', 'GE'];
+            const LANG_STORAGE_KEY = 'iemes32_lang';
+
+            let detectedCountry = null;
+
+            function browserLangIsCIS() {
+                const langs = navigator.languages || [navigator.language || ''];
+                return langs.some(l => {
+                    const code = (l || '').toLowerCase().split('-')[0];
+                    return CIS_LANGS.indexOf(code) !== -1;
+                });
+            }
+
+            async function fetchCountry() {
+                if (detectedCountry !== null) return detectedCountry;
+                try {
+                    const res = await fetch('https://ipinfo.io/json?nocache=' + Date.now());
+                    const data = await res.json();
+                    detectedCountry = (data.country || '').toUpperCase();
+                } catch (e) {
+                    detectedCountry = '';
+                }
+                return detectedCountry;
+            }
+
+            /* ============================================================
+               ПРИМЕНЕНИЕ ЯЗЫКА
+               ============================================================ */
+            function applyLanguage(lang) {
+                if (!I18N[lang]) lang = 'ru';
+                currentLang = lang;
+                try { localStorage.setItem(LANG_STORAGE_KEY, lang); } catch (e) {}
+                document.documentElement.lang = lang;
+                const t = I18N[lang];
+
+                // Loader
+                document.getElementById('enterBtn').textContent = t.loader.enter;
+                document.getElementById('skipBtn').textContent = t.loader.skip;
+
+                // Tabs
+                document.querySelector('.tab-btn[data-tab="about"]').textContent = t.tabs.about;
+                document.querySelector('.tab-btn[data-tab="projects"]').textContent = t.tabs.projects;
+                document.querySelector('.tab-btn[data-tab="album"]').textContent = t.tabs.album;
+
+                // About
+                document.getElementById('aboutTitle').textContent = t.about.title;
+                document.getElementById('aboutText').innerHTML = t.about.text;
+
+                // Projects
+                renderProjects(t);
+
+                // Album settings
+                document.getElementById('albumSettingsBtn').textContent = t.album.settingsBtn;
+                document.getElementById('albumSortLabel').textContent = t.album.sortLabel;
+                document.getElementById('albumSortNameAsc').textContent = t.album.sortNameAsc;
+                document.getElementById('albumSortNameDesc').textContent = t.album.sortNameDesc;
+                document.getElementById('albumSortNone').textContent = t.album.sortNone;
+                document.getElementById('albumAutoplayLabel').textContent = t.album.autoplayLabel;
+                document.getElementById('albumMutedLabel').textContent = t.album.mutedLabel;
+                document.getElementById('albumLoopLabel').textContent = t.album.loopLabel;
+                document.getElementById('albumLoader').textContent = t.album.loading;
+
+                if (albumEmptyState) setAlbumEmpty(albumEmptyState);
+                updateAlbumCount();
+
+                // Banners
+                document.getElementById('cookieText').textContent = t.cookies.text;
+                document.getElementById('cookieYes').textContent = t.cookies.yes;
+                document.getElementById('cookieAbsolutely').textContent = t.cookies.absolutely;
+                document.getElementById('vpnText').textContent = t.vpn.text;
+                document.getElementById('vpnClose').textContent = t.vpn.close;
+
+                // Modal title
+                document.getElementById('modalTitle').textContent = t.modal.title;
+
+                // Language toggle button (shows the language you switch TO)
+                document.getElementById('langToggle').textContent = t.langToggleLabel;
+
+                // Закрываем модалку, если открыта — чтобы не было рассинхрона
+                if (modalOverlay && modalOverlay.classList.contains('active')) closeModal();
+            }
+
+            async function initLanguage() {
+                let saved = null;
+                try { saved = localStorage.getItem(LANG_STORAGE_KEY); } catch (e) {}
+
+                if (saved === 'ru' || saved === 'en') {
+                    applyLanguage(saved);
+                    return;
+                }
+
+                // Первичное решение — по языку браузера
+                const browserCIS = browserLangIsCIS();
+                applyLanguage(browserCIS ? 'ru' : 'en');
+
+                // Уточняем по IP (если IP из CIS — ставим русский)
+                const country = await fetchCountry();
+                if (country && CIS_COUNTRIES.indexOf(country) !== -1 && currentLang !== 'ru') {
+                    applyLanguage('ru');
+                }
+            }
+
+            /* ============================================================
+               ЗВЁЗДЫ, ЧАСТИЦЫ
+               ============================================================ */
             (function createStars() {
                 const container = document.getElementById('stars');
                 for (let i = 0; i < 80; i++) {
@@ -391,13 +682,31 @@
                 }
             })();
 
-            /* ---------- ЗАПОЛНЕНИЕ ОСНОВНЫХ ДАННЫХ ---------- */
+            (function createParticles() {
+                const container = document.getElementById('particles');
+                for (let i = 0; i < 55; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    const size = Math.random() * 9 + 3;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+                    particle.style.animationDelay = (Math.random() * 10) + 's';
+                    particle.style.opacity = Math.random() * 0.5 + 0.2;
+                    container.appendChild(particle);
+                }
+            })();
+
+            /* ============================================================
+               ОСНОВНЫЕ ДАННЫЕ (аватар, имя, соцсети)
+               ============================================================ */
             document.getElementById('name').textContent = c.name;
-            document.getElementById('title').textContent = c.title;
+            document.getElementById('title').textContent = '✦';
 
             const avatarEl = document.getElementById('avatar');
             avatarEl.src = c.avatar;
-            avatarEl.alt = 'Аватар ' + c.name;
+            avatarEl.alt = 'Avatar ' + c.name;
 
             const socialsContainer = document.getElementById('socials');
             socialsContainer.innerHTML = '';
@@ -418,211 +727,606 @@
                 socialsContainer.appendChild(a);
             });
 
-            const about = c.about;
-            document.getElementById('aboutTitle').textContent = about.title;
-            document.getElementById('aboutText').innerHTML = about.text;
-            const mediaContainer = document.getElementById('aboutMediaContainer');
-            mediaContainer.innerHTML = '';
+            /* ============================================================
+               ABOUT MEDIA (создаётся один раз, не зависит от языка)
+               ============================================================ */
             let aboutImgLoaded = false;
-            if (about.media && about.media.trim() !== '') {
-                const url = about.media.trim();
-                const ext = url.split('.').pop().toLowerCase();
-                const videoExts = ['mp4', 'webm', 'ogg', 'mov'];
-                let el;
-                if (videoExts.includes(ext)) {
-                    el = document.createElement('video');
-                    el.src = url;
-                    el.controls = true;
-                    el.loop = true;
-                    el.muted = true;
-                    el.className = 'about-media';
-                    el.addEventListener('loadeddata', () => { aboutImgLoaded = true; checkAllLoaded(); });
-                } else {
-                    el = document.createElement('img');
-                    el.src = url;
-                    el.alt = 'Фото';
-                    el.className = 'about-media';
-                    el.addEventListener('load', () => { aboutImgLoaded = true; checkAllLoaded(); });
-                    el.addEventListener('error', () => { aboutImgLoaded = true; checkAllLoaded(); });
-                }
-                mediaContainer.appendChild(el);
-            } else {
-                aboutImgLoaded = true;
-            }
-
-            const projectsGrid = document.getElementById('projectsGrid');
-            projectsGrid.innerHTML = '';
-            if (c.projects && c.projects.length > 0) {
-                c.projects.forEach(p => {
-                    const card = document.createElement('div');
-                    card.className = 'project-card';
-                    let imgHtml = '';
-                    if (p.image && p.image.trim() !== '') {
-                        imgHtml = `<img src="${p.image}" alt="${p.title}" />`;
+            (function renderAboutMedia() {
+                const container = document.getElementById('aboutMediaContainer');
+                container.innerHTML = '';
+                if (c.aboutMedia && c.aboutMedia.trim() !== '') {
+                    const url = c.aboutMedia.trim();
+                    const ext = url.split('.').pop().toLowerCase();
+                    const videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                    let el;
+                    if (videoExts.indexOf(ext) !== -1) {
+                        el = document.createElement('video');
+                        el.src = url;
+                        el.controls = true;
+                        el.loop = true;
+                        el.muted = true;
+                        el.className = 'about-media';
+                        el.addEventListener('loadeddata', () => { aboutImgLoaded = true; checkAllLoaded(); });
+                        el.addEventListener('error', () => { aboutImgLoaded = true; checkAllLoaded(); });
+                    } else {
+                        el = document.createElement('img');
+                        el.src = url;
+                        el.alt = 'Photo';
+                        el.className = 'about-media';
+                        el.addEventListener('load', () => { aboutImgLoaded = true; checkAllLoaded(); });
+                        el.addEventListener('error', () => { aboutImgLoaded = true; checkAllLoaded(); });
                     }
-                    card.innerHTML = `
-                        ${imgHtml}
-                        <h4>${p.title}</h4>
-                        <div class="project-desc">${p.description || ''}</div>
-                        ${p.link ? `<a href="${p.link}" target="_blank">Перейти →</a>` : ''}
-                    `;
-                    projectsGrid.appendChild(card);
-                });
-            } else {
-                projectsGrid.innerHTML = '<p style="color:#9bb7c9; text-align:center;">Пока нет проектов</p>';
+                    container.appendChild(el);
+                } else {
+                    aboutImgLoaded = true;
+                }
+            })();
+
+            /* ============================================================
+               ПРОЕКТЫ (перерисовываются при смене языка)
+               ============================================================ */
+            function renderProjects(t) {
+                const grid = document.getElementById('projectsGrid');
+                grid.innerHTML = '';
+                const projects = t.projects || [];
+                if (projects.length > 0) {
+                    projects.forEach((p, i) => {
+                        const cProj = (c.projects || [])[i] || {};
+                        const card = document.createElement('div');
+                        card.className = 'project-card';
+                        let imgHtml = '';
+                        if (cProj.image && cProj.image.trim() !== '') {
+                            imgHtml = `<img src="${cProj.image}" alt="${p.title}" />`;
+                        }
+                        card.innerHTML = `
+                            ${imgHtml}
+                            <h4>${p.title}</h4>
+                            <div class="project-desc">${p.description || ''}</div>
+                            ${cProj.link ? `<a href="${cProj.link}" target="_blank">${t.projectLink}</a>` : ''}
+                        `;
+                        grid.appendChild(card);
+                    });
+                } else {
+                    grid.innerHTML = `<p style="color:#9bb7c9; text-align:center;">${t.noProjects}</p>`;
+                }
             }
 
             /* ============================================================
-               АЛЬБОМ — АВТОЗАГРУЗКА ИЗ GITHUB
+               АЛЬБОМ — PINTEREST-СЕТКА + ЛЕНИВАЯ ПОДГРУЗКА + ЛАЙТБОКС
                ============================================================ */
-            const albumGrid = document.getElementById('albumGrid');
-            const albumEmpty = document.getElementById('albumEmpty');
-            let albumLoaded = false;
+            const albumGrid        = document.getElementById('albumGrid');
+            const albumEmpty       = document.getElementById('albumEmpty');
+            const albumLoaderEl    = document.getElementById('albumLoader');
+            const albumSentinel    = document.getElementById('albumSentinel');
+            const albumCountEl     = document.getElementById('albumCount');
+            const albumSettingsBtn = document.getElementById('albumSettingsBtn');
+            const albumSettingsPanel = document.getElementById('albumSettingsPanel');
+            const albumSortSel     = document.getElementById('albumSort');
+            const albumAutoplayCb  = document.getElementById('albumAutoplay');
+            const albumMutedCb     = document.getElementById('albumMuted');
+            const albumLoopCb      = document.getElementById('albumLoop');
 
-            async function loadAlbum() {
+            const ALBUM_SETTINGS_KEY = 'iemes32_album_settings';
+            const ALBUM_BATCH = Math.max(3, parseInt(c.album.batchSize, 10) || 12);
+
+            let albumEmptyState = null;
+
+            const album = {
+                all: [],
+                items: [],
+                els: [],
+                rendered: 0,
+                cols: [],
+                colCount: 0,
+                gapPx: parseInt(c.album.gap, 10) || 12,
+                loading: false,
+                ready: false,
+                mounted: false,
+                sentinelObserver: null,
+                videoObserver: null,
+                settings: {
+                    sort: 'name-asc',
+                    autoplay: false,
+                    muted: true,
+                    loop: true
+                }
+            };
+
+            const sizeCache = new Map();
+
+            function isAlbumTabActive() {
+                const el = document.getElementById('tab-album');
+                return !!el && el.classList.contains('active');
+            }
+
+            /* ---------- НАСТРОЙКИ ---------- */
+            function loadAlbumSettings() {
+                const defaults = Object.assign({ sort: 'name-asc', autoplay: false, muted: true, loop: true }, c.album.defaults || {});
+                let saved = {};
+                try { saved = JSON.parse(localStorage.getItem(ALBUM_SETTINGS_KEY) || '{}') || {}; } catch (e) {}
+                album.settings.sort = ['name-asc', 'name-desc', 'none'].indexOf(saved.sort) !== -1 ? saved.sort : defaults.sort;
+                album.settings.autoplay = typeof saved.autoplay === 'boolean' ? saved.autoplay : defaults.autoplay;
+                album.settings.muted    = typeof saved.muted    === 'boolean' ? saved.muted    : defaults.muted;
+                album.settings.loop     = typeof saved.loop     === 'boolean' ? saved.loop     : defaults.loop;
+            }
+
+            function saveAlbumSettings() {
+                try { localStorage.setItem(ALBUM_SETTINGS_KEY, JSON.stringify(album.settings)); } catch (e) {}
+            }
+
+            function syncSettingsUI() {
+                albumSortSel.value      = album.settings.sort;
+                albumAutoplayCb.checked = album.settings.autoplay;
+                albumMutedCb.checked    = album.settings.muted;
+                albumLoopCb.checked     = album.settings.loop;
+            }
+
+            /* ---------- СОРТИРОВКА ---------- */
+            function sortAlbumItems(list, mode) {
+                const arr = list.slice();
+                if (mode === 'name-asc') {
+                    arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+                } else if (mode === 'name-desc') {
+                    arr.sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true, sensitivity: 'base' }));
+                }
+                return arr;
+            }
+
+            /* ---------- EMPTY STATE ---------- */
+            function setAlbumEmpty(state) {
+                albumEmptyState = state;
+                if (!state) { albumEmpty.style.display = 'none'; albumEmpty.innerHTML = ''; return; }
+                const t = I18N[currentLang].album;
+                albumEmpty.style.display = 'block';
+                if (state === 'autoOff') albumEmpty.textContent = t.emptyAutoOff;
+                else if (state === 'error') albumEmpty.textContent = t.emptyError;
+                else if (state === 'empty') {
+                    const prefix = c.album.filePrefix || '';
+                    if (prefix) albumEmpty.innerHTML = t.emptyNoPrefix.replace('{prefix}', prefix);
+                    else albumEmpty.textContent = t.emptyNoFiles;
+                }
+            }
+
+            /* ---------- ЗАГРУЗКА СПИСКА ---------- */
+            async function fetchAlbumItems() {
                 if (!c.album.autoLoad) {
-                    albumEmpty.style.display = 'block';
-                    albumEmpty.textContent = 'Автозагрузка альбома отключена в настройках.';
+                    album.ready = true;
+                    setAlbumEmpty('autoOff');
                     return;
                 }
 
-                const owner = c.album.repoOwner;
-                const repo = c.album.repoName;
-                const branch = c.album.branch;
-                const path = c.album.path ? `/${c.album.path}` : '';
-                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents${path}?ref=${branch}`;
+                const owner  = c.album.repoOwner;
+                const repo   = c.album.repoName;
+                const branch = c.album.branch || 'main';
+                const cleanPath = (c.album.path || '').replace(/^\/+|\/+$/g, '');
+                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents${cleanPath ? '/' + cleanPath : ''}?ref=${encodeURIComponent(branch)}`;
 
                 try {
-                    const response = await fetch(apiUrl, {
-                        headers: { 'Accept': 'application/vnd.github.v3+json' }
-                    });
-                    if (!response.ok) {
-                        throw new Error(`GitHub API: ${response.status} ${response.statusText}`);
-                    }
-                    const items = await response.json();
-                    if (!Array.isArray(items)) {
-                        throw new Error('GitHub API вернул неожиданный ответ');
-                    }
+                    const res = await fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github+json' } });
+                    if (!res.ok) throw new Error('GitHub API: ' + res.status + ' ' + res.statusText);
+                    const data = await res.json();
+                    if (!Array.isArray(data)) throw new Error('Unexpected GitHub API response');
 
-                    // Фильтруем: тип "file", имя начинается с префикса, расширение подходит
-                    const mediaItems = items.filter(item => {
-                        if (item.type !== 'file') return false;
-                        if (!item.name.startsWith(c.album.filePrefix)) return false;
-                        const ext = item.name.split('.').pop().toLowerCase();
-                        return c.album.imageExtensions.includes(ext) ||
-                               c.album.videoExtensions.includes(ext);
+                    const prefix = (c.album.filePrefix || '').toLowerCase();
+                    const found = [];
+
+                    data.forEach(item => {
+                        if (!item || item.type !== 'file' || !item.download_url) return;
+                        const nameLower = item.name.toLowerCase();
+                        if (prefix && nameLower.indexOf(prefix) !== 0) return;
+                        const ext = nameLower.split('.').pop();
+                        const isImage = c.album.imageExtensions.indexOf(ext) !== -1;
+                        const isVideo = c.album.videoExtensions.indexOf(ext) !== -1;
+                        if (!isImage && !isVideo) return;
+                        found.push({
+                            name: item.name,
+                            url: item.download_url,
+                            type: isVideo ? 'video' : 'image'
+                        });
                     });
 
-                    if (mediaItems.length === 0) {
-                        albumEmpty.style.display = 'block';
-                        albumEmpty.textContent = 'В корневой папке нет файлов, подходящих под шаблон photo_*.';
-                        albumLoaded = true;
+                    album.all = found;
+                    album.ready = true;
+
+                    if (!found.length) {
+                        setAlbumEmpty('empty');
+                        updateAlbumCount();
                         return;
                     }
 
-                    // Сортировка
-                    const sortMode = c.album.sort;
-                    mediaItems.sort((a, b) => {
-                        if (sortMode === 'name-asc') return a.name.localeCompare(b.name, undefined, {numeric: true});
-                        if (sortMode === 'name-desc') return b.name.localeCompare(a.name, undefined, {numeric: true});
-                        if (sortMode === 'date-asc') return new Date(a.git_url ? 0 : 0) - new Date(0); // заглушка, ниже используем commit
-                        // Для сортировки по дате нужен другой endpoint (commits), но для простоты
-                        // оставим сортировку по имени, если выбрано date-*
-                        if (sortMode === 'date-asc' || sortMode === 'date-desc') {
-                            // GitHub Contents API не отдаёт дату изменения напрямую,
-                            // поэтому используем имя как fallback.
-                            return a.name.localeCompare(b.name, undefined, {numeric: true});
-                        }
-                        return 0; // none
-                    });
+                    album.items = sortAlbumItems(album.all, album.settings.sort);
+                    updateAlbumCount();
+                    setAlbumEmpty(null);
 
-                    // Применяем настройки сетки
-                    albumGrid.style.gap = c.album.gap;
-                    // columns: используем auto-fill, но можно ограничить max
-                    // (в CSS уже стоит minmax(160px, 1fr), адаптивно)
-
-                    // Очищаем
-                    albumGrid.innerHTML = '';
-                    albumEmpty.style.display = 'none';
-
-                    // Создаём элементы
-                    mediaItems.forEach(item => {
-                        const ext = item.name.split('.').pop().toLowerCase();
-                        const isVideo = c.album.videoExtensions.includes(ext);
-
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'album-item';
-
-                        const mediaUrl = item.download_url;
-
-                        if (isVideo) {
-                            const video = document.createElement('video');
-                            video.src = mediaUrl;
-                            video.controls = true;
-                            video.muted = c.album.videoMuted;
-                            video.loop = c.album.videoLoop;
-                            video.autoplay = c.album.videoAutoplay;
-                            video.playsInline = true;
-                            video.preload = 'metadata';
-                            // После загрузки метаданных узнаём ориентацию
-                            video.addEventListener('loadedmetadata', () => {
-                                applyOrientationClass(wrapper, video.videoWidth, video.videoHeight);
-                            });
-                            // Если автовоспроизведение заблокировано, ничего страшного
-                            video.addEventListener('error', () => {
-                                // fallback — просто показываем заглушку
-                                wrapper.innerHTML = '<div style="padding:20px;color:#9bb7c9;">Ошибка видео</div>';
-                            });
-                            wrapper.appendChild(video);
-                        } else {
-                            const img = document.createElement('img');
-                            img.src = mediaUrl;
-                            img.alt = item.name;
-                            img.loading = 'lazy';
-                            img.addEventListener('load', () => {
-                                applyOrientationClass(wrapper, img.naturalWidth, img.naturalHeight);
-                            });
-                            img.addEventListener('error', () => {
-                                wrapper.innerHTML = '<div style="padding:20px;color:#9bb7c9;">Ошибка изображения</div>';
-                            });
-                            wrapper.appendChild(img);
-                        }
-
-                        albumGrid.appendChild(wrapper);
-                    });
-
-                    albumLoaded = true;
-
+                    if (isAlbumTabActive()) mountAlbum();
                 } catch (err) {
-                    console.error('Ошибка загрузки альбома:', err);
-                    albumEmpty.style.display = 'block';
-                    albumEmpty.textContent = 'Не удалось загрузить альбом. Проверьте настройки или подключение.';
-                    albumLoaded = true;
+                    console.error('Album load error:', err);
+                    album.ready = true;
+                    setAlbumEmpty('error');
                 }
             }
 
-            function applyOrientationClass(el, width, height) {
-                el.classList.remove('portrait', 'square', 'landscape');
-                if (!width || !height) return;
-                const ratio = width / height;
-                if (ratio < 0.85) {
-                    el.classList.add('portrait');
-                    el.style.gridRowEnd = `span ${c.album.portraitSpan}`;
-                } else if (ratio > 1.15) {
-                    el.classList.add('landscape');
-                    el.style.gridRowEnd = `span ${c.album.squareSpan}`;
-                } else {
-                    el.classList.add('square');
-                    el.style.gridRowEnd = `span ${c.album.squareSpan}`;
+            function updateAlbumCount() {
+                if (!albumCountEl) return;
+                if (!album.items.length) { albumCountEl.textContent = ''; return; }
+                const t = I18N[currentLang].album;
+                albumCountEl.textContent = t.count
+                    .replace('{shown}', Math.min(album.rendered, album.items.length))
+                    .replace('{total}', album.items.length);
+            }
+
+            /* ---------- КОЛОНКИ ---------- */
+            function calcColumnCount() {
+                const w = albumGrid.clientWidth || 0;
+                if (w < 360) return 1;
+                if (w < 540) return 2;
+                return 3;
+            }
+
+            function createColumnEls() {
+                albumGrid.innerHTML = '';
+                albumGrid.style.setProperty('--album-gap', album.gapPx + 'px');
+                album.cols = [];
+                album.colCount = calcColumnCount();
+                for (let i = 0; i < album.colCount; i++) {
+                    const col = document.createElement('div');
+                    col.className = 'album-col';
+                    albumGrid.appendChild(col);
+                    album.cols.push(col);
                 }
             }
 
-            // Запускаем загрузку альбома после загрузки основного контента
-            // (можно сразу, не дожидаясь лоадера)
-            loadAlbum();
+            function appendToShortest(el) {
+                let idx = 0;
+                let minH = Infinity;
+                for (let i = 0; i < album.cols.length; i++) {
+                    const h = album.cols[i].offsetHeight;
+                    if (h < minH) { minH = h; idx = i; }
+                }
+                album.cols[idx].appendChild(el);
+            }
+
+            /* ---------- РАЗМЕРЫ ---------- */
+            function getMediaSize(item) {
+                if (sizeCache.has(item.url)) return Promise.resolve(sizeCache.get(item.url));
+                return new Promise(resolve => {
+                    let done = false;
+                    const finish = (w, h) => {
+                        if (done) return;
+                        done = true;
+                        if (!w || !h) { w = 4; h = 3; }
+                        const size = { w: w, h: h };
+                        sizeCache.set(item.url, size);
+                        resolve(size);
+                    };
+                    const timer = setTimeout(() => finish(4, 3), 10000);
+
+                    if (item.type === 'video') {
+                        const v = document.createElement('video');
+                        v.preload = 'metadata';
+                        v.muted = true;
+                        v.playsInline = true;
+                        v.onloadedmetadata = () => { clearTimeout(timer); finish(v.videoWidth, v.videoHeight); };
+                        v.onerror = () => { clearTimeout(timer); finish(16, 9); };
+                        v.src = item.url;
+                    } else {
+                        const img = new Image();
+                        img.onload = () => { clearTimeout(timer); finish(img.naturalWidth, img.naturalHeight); };
+                        img.onerror = () => { clearTimeout(timer); finish(4, 3); };
+                        img.src = item.url;
+                    }
+                });
+            }
 
             /* ============================================================
-               МУЗЫКА (fetch+Blob) — БЕЗ ИЗМЕНЕНИЙ
+               КООРДИНАЦИЯ ВИДЕО ↔ МУЗЫКА
+               Любое видео играет → музыка на паузу.
+               Все видео остановлены → музыка возвращается.
+               ============================================================ */
+            const playingVideos = new Set();
+            let musicPausedByVideo = false;
+
+            function attachVideoMusicHandlers(video) {
+                video.addEventListener('play', () => {
+                    playingVideos.add(video);
+                    updateMusicForVideos();
+                });
+                video.addEventListener('pause', () => {
+                    playingVideos.delete(video);
+                    updateMusicForVideos();
+                });
+                video.addEventListener('ended', () => {
+                    playingVideos.delete(video);
+                    updateMusicForVideos();
+                });
+            }
+
+            function updateMusicForVideos() {
+                const bgAudio = document.getElementById('bg-music');
+                if (!bgAudio) return;
+                if (playingVideos.size > 0) {
+                    if (!bgAudio.paused) {
+                        musicPausedByVideo = true;
+                        bgAudio.pause();
+                    }
+                } else if (musicPausedByVideo) {
+                    musicPausedByVideo = false;
+                    bgAudio.play().catch(() => {});
+                }
+            }
+
+            /* ---------- СОЗДАНИЕ КАРТОЧКИ ---------- */
+            function createAlbumItem(item, size) {
+                const wrap = document.createElement('div');
+                wrap.className = 'album-item';
+                wrap.style.aspectRatio = size.w + ' / ' + size.h;
+                wrap.dataset.name = item.name;
+
+                if (item.type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = item.url;
+                    video.controls = true;
+                    video.loop = album.settings.loop;
+                    video.muted = album.settings.muted;
+                    video.playsInline = true;
+                    video.setAttribute('playsinline', '');
+                    video.preload = 'metadata';
+                    wrap.appendChild(video);
+                    attachVideoMusicHandlers(video);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = item.url;
+                    img.alt = item.name;
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    img.draggable = false;
+                    wrap.appendChild(img);
+                    // Клик по фото — открыть лайтбокс
+                    wrap.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openLightbox(item.url);
+                    });
+                }
+                return wrap;
+            }
+
+            /* ---------- МОНТИРОВАНИЕ ---------- */
+            function mountAlbum() {
+                if (album.mounted || !album.ready || !album.items.length) return;
+                album.mounted = true;
+                setAlbumEmpty(null);
+                createColumnEls();
+                setupSentinel();
+                renderNextBatch();
+            }
+
+            function setupSentinel() {
+                if (album.sentinelObserver) album.sentinelObserver.disconnect();
+                albumSentinel.style.display = 'block';
+                album.sentinelObserver = new IntersectionObserver(entries => {
+                    entries.forEach(e => {
+                        if (e.isIntersecting) renderNextBatch();
+                    });
+                }, { root: null, rootMargin: '600px 0px', threshold: 0 });
+                album.sentinelObserver.observe(albumSentinel);
+            }
+
+            /* ---------- ЛЕНИВАЯ ПОДГРУЗКА ---------- */
+            async function renderNextBatch() {
+                if (!album.mounted || album.loading) return;
+                if (!isAlbumTabActive()) return;
+                if (album.rendered >= album.items.length) {
+                    updateAlbumCount();
+                    albumSentinel.style.display = 'none';
+                    return;
+                }
+
+                album.loading = true;
+                if (albumLoaderEl) albumLoaderEl.style.display = 'block';
+
+                const start = album.rendered;
+                const batch = album.items.slice(start, start + ALBUM_BATCH);
+
+                try {
+                    const sizes = await Promise.all(batch.map(getMediaSize));
+                    if (!album.mounted || !isAlbumTabActive()) return;
+
+                    album.rendered = start + batch.length;
+                    batch.forEach((item, i) => {
+                        const el = createAlbumItem(item, sizes[i]);
+                        appendToShortest(el);
+                        album.els.push(el);
+                    });
+
+                    if (album.settings.autoplay) setupVideoObserver();
+                } catch (e) {
+                    console.warn('Batch render error:', e);
+                } finally {
+                    album.loading = false;
+                    if (albumLoaderEl) albumLoaderEl.style.display = 'none';
+                    updateAlbumCount();
+                    if (album.rendered >= album.items.length) albumSentinel.style.display = 'none';
+                    requestAnimationFrame(maybeLoadMore);
+                }
+            }
+
+            function maybeLoadMore() {
+                if (!album.mounted || album.loading) return;
+                if (album.rendered >= album.items.length) return;
+                if (!isAlbumTabActive()) return;
+                const rect = albumSentinel.getBoundingClientRect();
+                const vh = window.innerHeight || document.documentElement.clientHeight;
+                if (rect.top <= vh + 500) renderNextBatch();
+            }
+
+            /* ---------- ВИДЕО-ОБЗЕРВЕР (для автоплея) ---------- */
+            function setupVideoObserver() {
+                if (album.videoObserver) {
+                    album.videoObserver.disconnect();
+                    album.videoObserver = null;
+                }
+                if (!album.settings.autoplay) return;
+
+                const videos = albumGrid.querySelectorAll('video');
+                if (!videos.length) return;
+
+                album.videoObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        const v = entry.target;
+                        if (entry.isIntersecting) {
+                            v.muted = album.settings.muted;
+                            v.loop = album.settings.loop;
+                            v.play().catch(() => {});
+                        } else {
+                            try { v.pause(); } catch (e) {}
+                        }
+                    });
+                }, { threshold: 0.25 });
+
+                videos.forEach(v => album.videoObserver.observe(v));
+            }
+
+            function applyVideoSettings() {
+                albumGrid.querySelectorAll('video').forEach(v => {
+                    v.muted = album.settings.muted;
+                    v.loop = album.settings.loop;
+                    if (!album.settings.autoplay) {
+                        try { v.pause(); } catch (e) {}
+                    }
+                });
+                setupVideoObserver();
+            }
+
+            /* ============================================================
+               ЛАЙТБОКС
+               ============================================================ */
+            const lightboxEl    = document.getElementById('lightbox');
+            const lightboxImg   = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
+            const lightboxPrev  = document.getElementById('lightboxPrev');
+            const lightboxNext  = document.getElementById('lightboxNext');
+            const lightboxCounter = document.getElementById('lightboxCounter');
+
+            let lightboxIndex = -1;
+
+            function getImageItems() {
+                return album.items.filter(it => it.type === 'image');
+            }
+
+            function renderLightbox() {
+                const imgs = getImageItems();
+                if (!imgs.length || lightboxIndex < 0 || lightboxIndex >= imgs.length) return;
+                const item = imgs[lightboxIndex];
+                lightboxImg.src = item.url;
+                lightboxImg.alt = item.name;
+                lightboxCounter.textContent = (lightboxIndex + 1) + ' / ' + imgs.length;
+                const many = imgs.length > 1;
+                lightboxPrev.style.display = many ? 'flex' : 'none';
+                lightboxNext.style.display = many ? 'flex' : 'none';
+            }
+
+            function openLightbox(url) {
+                const imgs = getImageItems();
+                const idx = imgs.findIndex(it => it.url === url);
+                if (idx === -1) return;
+                lightboxIndex = idx;
+                renderLightbox();
+                lightboxEl.classList.add('active');
+                document.body.classList.add('lightbox-open');
+            }
+
+            function closeLightbox() {
+                lightboxEl.classList.remove('active');
+                document.body.classList.remove('lightbox-open');
+                lightboxIndex = -1;
+                lightboxImg.src = '';
+            }
+
+            function navigateLightbox(dir) {
+                const imgs = getImageItems();
+                if (!imgs.length) return;
+                lightboxIndex = (lightboxIndex + dir + imgs.length) % imgs.length;
+                renderLightbox();
+            }
+
+            lightboxClose.addEventListener('click', closeLightbox);
+            lightboxPrev.addEventListener('click', () => navigateLightbox(-1));
+            lightboxNext.addEventListener('click', () => navigateLightbox(1));
+            lightboxEl.addEventListener('click', (e) => {
+                if (e.target === lightboxEl) closeLightbox();
+            });
+
+            // Свайп
+            let lbTouchX = 0;
+            lightboxEl.addEventListener('touchstart', (e) => {
+                lbTouchX = e.touches[0].clientX;
+            }, { passive: true });
+            lightboxEl.addEventListener('touchend', (e) => {
+                const dx = e.changedTouches[0].clientX - lbTouchX;
+                if (Math.abs(dx) > 50) navigateLightbox(dx > 0 ? -1 : 1);
+            }, { passive: true });
+
+            /* ---------- ОБРАБОТЧИКИ НАСТРОЕК АЛЬБОМА ---------- */
+            function applySettingsChange() {
+                album.settings.sort     = albumSortSel.value;
+                album.settings.autoplay = albumAutoplayCb.checked;
+                album.settings.muted    = albumMutedCb.checked;
+                album.settings.loop     = albumLoopCb.checked;
+                saveAlbumSettings();
+            }
+
+            albumSortSel.addEventListener('change', () => {
+                applySettingsChange();
+                album.items = sortAlbumItems(album.all, album.settings.sort);
+                closeLightbox();
+                resetAlbumRender();
+            });
+
+            [albumAutoplayCb, albumMutedCb, albumLoopCb].forEach(cb => {
+                cb.addEventListener('change', () => {
+                    applySettingsChange();
+                    applyVideoSettings();
+                });
+            });
+
+            albumSettingsBtn.addEventListener('click', () => {
+                const active = albumSettingsPanel.classList.toggle('active');
+                albumSettingsBtn.classList.toggle('active', active);
+            });
+
+            function resetAlbumRender() {
+                if (!album.mounted) return;
+                album.els = [];
+                album.rendered = 0;
+                album.loading = false;
+                updateAlbumCount();
+                createColumnEls();
+                albumSentinel.style.display = 'block';
+                renderNextBatch();
+            }
+
+            /* ---------- АДАПТИВНАЯ ПЕРЕСБОРКА ---------- */
+            let albumResizeTimer = null;
+            window.addEventListener('resize', () => {
+                clearTimeout(albumResizeTimer);
+                albumResizeTimer = setTimeout(() => {
+                    if (!album.mounted) return;
+                    if (calcColumnCount() !== album.colCount) {
+                        const els = album.els.slice();
+                        createColumnEls();
+                        els.forEach(el => appendToShortest(el));
+                        if (album.settings.autoplay) setupVideoObserver();
+                    }
+                }, 200);
+            });
+
+            /* ---------- СТАРТ АЛЬБОМА ---------- */
+            loadAlbumSettings();
+            syncSettingsUI();
+            fetchAlbumItems();
+
+            /* ============================================================
+               МУЗЫКА
                ============================================================ */
             const audio = document.getElementById('bg-music');
             let isMuted = false;
@@ -635,6 +1339,7 @@
             let isAudioReady = false;
             let audioLoaded = false;
             let audioBlobUrl = null;
+            let musicLoaded = false;
 
             function setupAudio() {
                 if (audioCtx) return;
@@ -645,11 +1350,9 @@
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
                     isAudioReady = true;
                 } catch (e) {
-                    console.warn('Web Audio не поддерживается');
+                    console.warn('Web Audio not supported');
                 }
             }
-
-            let musicLoaded = false;
 
             function loadMusic() {
                 if (musicLoaded) return Promise.resolve();
@@ -670,7 +1373,7 @@
                                 analyser.connect(audioCtx.destination);
                                 isAudioReady = true;
                             } catch (e) {
-                                console.warn('Не удалось подключить AnalyserNode');
+                                console.warn('AnalyserNode connection failed');
                             }
                         }
                         audioLoaded = true;
@@ -682,15 +1385,12 @@
             function startMusic() {
                 if (!audioLoaded) return;
                 if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume().then(() => {
-                        audio.play().catch(() => {});
-                    }).catch(() => {});
+                    audioCtx.resume().then(() => { audio.play().catch(() => {}); }).catch(() => {});
                 } else {
                     audio.play().catch(() => {});
                 }
             }
 
-            /* ---------- УПРАВЛЕНИЕ ЗВУКОМ ---------- */
             const muteBtn = document.getElementById('muteBtn');
             const volumeSlider = document.getElementById('volumeSlider');
             const volumeStatus = document.getElementById('volumeStatus');
@@ -718,9 +1418,7 @@
             volumeSlider.addEventListener('input', function() {
                 let val = parseFloat(this.value);
                 currentVolume = val;
-                if (!isMuted) {
-                    audio.volume = val;
-                }
+                if (!isMuted) audio.volume = val;
                 volumeStatus.textContent = Math.round(val * 100) + '%';
                 if (isMuted && val > 0) {
                     isMuted = false;
@@ -736,7 +1434,9 @@
             volumeSlider.value = currentVolume;
             volumeStatus.textContent = '35%';
 
-            /* ---------- ВИЗУАЛИЗАТОР ---------- */
+            /* ============================================================
+               ВИЗУАЛИЗАТОР
+               ============================================================ */
             const canvas = document.getElementById('visualizer');
             const ctx = canvas.getContext('2d');
             let width, height;
@@ -792,7 +1492,7 @@
                 const avg = sum / bufferLength / 255;
                 document.querySelector('.card').style.animationDuration = (4 + (1 - avg) * 2) + 's';
                 const particles = document.querySelectorAll('.particle');
-                particles.forEach((p) => {
+                particles.forEach(p => {
                     const scale = 0.7 + avg * 0.8;
                     p.style.transform = `scale(${scale})`;
                     p.style.opacity = 0.4 + avg * 0.6;
@@ -802,7 +1502,9 @@
             }
             drawVisualizer();
 
-            /* ---------- МОДАЛЬНОЕ ОКНО ---------- */
+            /* ============================================================
+               МОДАЛЬНОЕ ОКНО
+               ============================================================ */
             const modalOverlay = document.getElementById('modalOverlay');
             const modalBody = document.getElementById('modalBody');
             const modalClose = document.getElementById('modalClose');
@@ -812,7 +1514,7 @@
                     const res = await fetch('https://api.ipify.org?format=json');
                     const data = await res.json();
                     return data.ip;
-                } catch { return 'не определен'; }
+                } catch { return '?'; }
             }
 
             function getOS(ua) {
@@ -839,40 +1541,43 @@
             }
 
             async function showModal() {
+                const t = I18N[currentLang].modal;
                 const ua = navigator.userAgent;
                 const os = getOS(ua);
                 const browser = getBrowser(ua);
                 const browserVer = getBrowserVersion(ua);
                 const ip = await getRealIP();
+                const yes = t.yes, no = t.no, unknown = t.unknown;
 
                 const data = {
-                    'IP-адрес': ip,
-                    'Браузер': `${browser} ${browserVer}`,
-                    'Операционная система': os,
-                    'Платформа': navigator.platform,
-                    'Язык': navigator.language,
-                    'Часовой пояс': Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    'Cookies включены': navigator.cookieEnabled ? 'Да' : 'Нет',
-                    'Онлайн': navigator.onLine ? 'Да' : 'Нет',
-                    'Разрешение экрана': `${window.screen.width}×${window.screen.height}`,
-                    'Доступная область': `${window.screen.availWidth}×${window.screen.availHeight}`,
-                    'Глубина цвета': window.screen.colorDepth + ' бит',
-                    'Память устройства': navigator.deviceMemory ? navigator.deviceMemory + ' ГБ' : 'не известно',
-                    'Ядер процессора': navigator.hardwareConcurrency || 'не известно',
-                    'Тип сети': navigator.connection ? navigator.connection.effectiveType : 'не известно',
-                    'User-Agent': ua,
-                    'Дата и время': new Date().toLocaleString(),
-                    'Ваш любимый цвет': ['#2ba1cb', '#5c6873', '#002b44', '#ff6b6b', '#feca57'][Math.floor(Math.random() * 5)],
-                    'Скорость интернета': (Math.random() * 100 + 20).toFixed(1) + ' Мбит/с (приблизительно)'
+                    [t.ip]: ip,
+                    [t.browser]: `${browser} ${browserVer}`,
+                    [t.os]: os,
+                    [t.platform]: navigator.platform,
+                    [t.language]: navigator.language,
+                    [t.timezone]: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    [t.cookies]: navigator.cookieEnabled ? yes : no,
+                    [t.online]: navigator.onLine ? yes : no,
+                    [t.screenRes]: `${window.screen.width}×${window.screen.height}`,
+                    [t.availArea]: `${window.screen.availWidth}×${window.screen.availHeight}`,
+                    [t.colorDepth]: window.screen.colorDepth + ' ' + t.bit,
+                    [t.deviceMemory]: navigator.deviceMemory ? navigator.deviceMemory + ' ' + t.gb : unknown,
+                    [t.cpuCores]: navigator.hardwareConcurrency || unknown,
+                    [t.network]: navigator.connection ? navigator.connection.effectiveType : unknown,
+                    [t.userAgent]: ua,
+                    [t.datetime]: new Date().toLocaleString(),
+                    [t.favColor]: ['#2ba1cb', '#5c6873', '#002b44', '#ff6b6b', '#feca57'][Math.floor(Math.random() * 5)],
+                    [t.speed]: (Math.random() * 100 + 20).toFixed(1) + ' ' + t.speedUnit
                 };
 
                 let html = '';
                 for (let key in data) {
-                    let value = data[key];
-                    let cls = (key === 'IP-адрес' || key === 'Ваш любимый цвет') ? 'highlight' : '';
+                    const value = data[key];
+                    const cls = (key === t.ip || key === t.favColor) ? 'highlight' : '';
                     html += `<div class="data-item"><span class="label">${key}</span><span class="value ${cls}">${value}</span></div>`;
                 }
                 modalBody.innerHTML = html;
+                document.getElementById('modalTitle').textContent = t.title;
                 modalOverlay.classList.add('active');
             }
 
@@ -881,9 +1586,10 @@
             }
             modalClose.addEventListener('click', closeModal);
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
 
-            /* ---------- ЗАГРУЗЧИК С РЕАЛЬНЫМ ПРОГРЕССОМ ---------- */
+            /* ============================================================
+               ЗАГРУЗЧИК
+               ============================================================ */
             const loader = document.getElementById('loader');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
@@ -898,9 +1604,7 @@
                 const clamped = Math.min(100, Math.max(0, value));
                 progressBar.style.width = clamped + '%';
                 progressText.textContent = clamped + '%';
-                if (clamped >= 100) {
-                    enableEnterButton();
-                }
+                if (clamped >= 100) enableEnterButton();
             }
 
             function enableEnterButton() {
@@ -911,35 +1615,27 @@
 
             function checkAllLoaded() {
                 if (allLoaded) return;
-                let avatarLoaded = false;
                 const avatarImg = document.getElementById('avatar');
-                if (avatarImg.complete && avatarImg.naturalWidth > 0) avatarLoaded = true;
+                let avatarLoaded = !!(avatarImg.complete && avatarImg.naturalWidth > 0);
 
                 if (avatarLoaded && aboutImgLoaded && musicLoaded) {
                     allLoaded = true;
-                    progress = 100;
                     updateProgress(100);
                 } else {
                     let loadedCount = 0;
-                    let total = 3;
+                    const total = 3;
                     if (avatarLoaded) loadedCount++;
                     if (aboutImgLoaded) loadedCount++;
                     if (musicLoaded) loadedCount++;
-                    progress = Math.min(90, Math.floor((loadedCount / total) * 90));
-                    updateProgress(progress);
+                    updateProgress(Math.min(90, Math.floor((loadedCount / total) * 90)));
                 }
             }
 
             const avatarImg = document.getElementById('avatar');
-            avatarImg.addEventListener('load', () => { checkAllLoaded(); });
-            avatarImg.addEventListener('error', () => { checkAllLoaded(); });
+            avatarImg.addEventListener('load', checkAllLoaded);
+            avatarImg.addEventListener('error', checkAllLoaded);
 
-            loadMusic().then(() => {
-                checkAllLoaded();
-            }).catch(() => {
-                musicLoaded = true;
-                checkAllLoaded();
-            });
+            loadMusic().then(checkAllLoaded).catch(() => { musicLoaded = true; checkAllLoaded(); });
 
             setTimeout(() => {
                 if (!allLoaded) {
@@ -952,11 +1648,8 @@
                 if (loaderHidden) return;
                 loaderHidden = true;
                 loader.classList.add('hidden');
-                if (!musicLoaded) {
-                    loadMusic().then(() => { startMusic(); });
-                } else {
-                    startMusic();
-                }
+                if (!musicLoaded) loadMusic().then(startMusic);
+                else startMusic();
                 setTimeout(showCookieBanner, 3000);
                 checkVPN();
             });
@@ -969,10 +1662,11 @@
                 setTimeout(showCookieBanner, 3000);
                 checkVPN();
             }
-
             enterBtn.addEventListener('click', enterSite);
 
-            /* ---------- COOKIE ---------- */
+            /* ============================================================
+               COOKIE / VPN
+               ============================================================ */
             const cookieBanner = document.getElementById('cookieBanner');
             const cookieYes = document.getElementById('cookieYes');
             const cookieAbsolutely = document.getElementById('cookieAbsolutely');
@@ -989,20 +1683,14 @@
             cookieYes.addEventListener('click', acceptCookies);
             cookieAbsolutely.addEventListener('click', acceptCookies);
 
-            /* ---------- VPN ---------- */
             const vpnBanner = document.getElementById('vpnBanner');
             const vpnClose = document.getElementById('vpnClose');
 
             async function checkVPN() {
                 if (localStorage.getItem('vpnClosed') === 'true') return;
-                try {
-                    const res = await fetch('https://ipinfo.io/json?nocache=' + Date.now());
-                    const data = await res.json();
-                    if (data.country && data.country !== 'RU' && data.country !== 'BY') {
-                        vpnBanner.style.display = 'block';
-                    }
-                } catch {
-                    // ignore
+                const country = await fetchCountry();
+                if (country && country !== 'RU' && country !== 'BY') {
+                    vpnBanner.style.display = 'block';
                 }
             }
 
@@ -1011,7 +1699,9 @@
                 vpnBanner.style.display = 'none';
             });
 
-            /* ---------- ВКЛАДКИ ---------- */
+            /* ============================================================
+               ВКЛАДКИ
+               ============================================================ */
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = {
                 about: document.getElementById('tab-about'),
@@ -1026,30 +1716,44 @@
                     document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
                     this.classList.add('active');
                     if (tabContents[target]) tabContents[target].classList.add('active');
+
+                    if (target === 'album') {
+                        requestAnimationFrame(() => {
+                            mountAlbum();
+                            maybeLoadMore();
+                        });
+                    }
                 });
             });
 
-            /* ---------- ФОН ---------- */
+            /* ============================================================
+               ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА + КЛАВИАТУРА
+               ============================================================ */
+            document.getElementById('langToggle').addEventListener('click', () => {
+                applyLanguage(currentLang === 'ru' ? 'en' : 'ru');
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (lightboxEl.classList.contains('active')) closeLightbox();
+                    else if (modalOverlay.classList.contains('active')) closeModal();
+                } else if (lightboxEl.classList.contains('active')) {
+                    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                    else if (e.key === 'ArrowRight') navigateLightbox(1);
+                }
+            });
+
+            /* ============================================================
+               ФОН
+               ============================================================ */
             if (c.backgroundImage && c.backgroundImage.trim() !== '') {
                 document.body.style.background = `url("${c.backgroundImage}") center/cover no-repeat fixed, #0e1419`;
             }
 
-            /* ---------- ЧАСТИЦЫ ---------- */
-            (function createParticles() {
-                const container = document.getElementById('particles');
-                for (let i = 0; i < 55; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    const size = Math.random() * 9 + 3;
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-                    particle.style.animationDelay = (Math.random() * 10) + 's';
-                    particle.style.opacity = Math.random() * 0.5 + 0.2;
-                    container.appendChild(particle);
-                }
-            })();
+            /* ============================================================
+               ИНИЦИАЛИЗАЦИЯ ЯЗЫКА (в конце — все элементы уже в DOM)
+               ============================================================ */
+            initLanguage();
 
         })();
     </script>
